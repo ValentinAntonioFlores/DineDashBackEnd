@@ -5,7 +5,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "restaurant_users")
-public class  RestaurantUser {
+public class RestaurantUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

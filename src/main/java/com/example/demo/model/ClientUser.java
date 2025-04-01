@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "client_users") // Corrección en el nombre de la tabla
 public class ClientUser {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Corrección: mejor usar IDENTITY
     private Long id;
