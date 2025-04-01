@@ -1,37 +1,61 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.ClientUser;
-import com.example.demo.repository.ClientUserRepository;
+import com.example.demo.services.ClientUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/clientUsers")
-@CrossOrigin(origins = "http://localhost:3000") // Permite conexiones desde el frontend
+@CrossOrigin(origins = "http://localhost:3000") // Permite conexiones desde React
 public class ClientUserController {
 
     @Autowired
-    private ClientUserRepository clientUserRepository;
+    private ClientUserService clientUserService;
 
+    // ✔ Crear un usuario (Alta)
     @PostMapping("/register")
-    public ClientUser registerUser(@RequestBody ClientUser clientUser) {
-        return clientUserRepository.save(clientUser);
+    public ResponseEntity<ClientUser> registerUser(@RequestBody ClientUser clientUser) {
+        return ResponseEntity.ok(clientUserService.registerClient(clientUser));
     }
 
-    @GetMapping("/all")
-    public List<ClientUser> getAllUsers() {
-        return clientUserRepository.findAll();
+    // ✔ Obtener usuario por ID
+    @GetMapping("/{id}")
+    public ResponseEntity<ClientUser> getUserById(@PathVariable UUID id) {
+        return clientUserService.getClientById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
+    // ✔ Obtener todos los usuarios
+    @GetMapping
+    public ResponseEntity<List<ClientUser>> getAllUsers() {
+        return ResponseEntity.ok(clientUserService.getAllClients());
+    }
+
+    // ✔ Actualizar usuario (Modificación)
+    @PutMapping("/{id}")
+    public ResponseEntity<ClientUser> updateUser(@PathVariable UUID id, @RequestBody ClientUser updatedUser) {
+        return ResponseEntity.ok(clientUserService.updateClient(id, updatedUser));
+    }
+
+    // ✔ Eliminar usuario (Baja)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
+        clientUserService.deleteClient(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ✔ Iniciar sesión
     @PostMapping("/login")
-    public Optional<ClientUser> loginUser(@RequestBody ClientUser loginRequest) {
-        Optional<ClientUser> user = clientUserRepository.findByEmail(loginRequest.getEmail());
-        if (user.isPresent() && user.get().getPassword().equals(loginRequest.getPassword())) {
-            return user; // Usuario autenticado
-        }
-        return Optional.empty(); // Credenciales incorrectas
+    public ResponseEntity<ClientUser> loginUser(@RequestParam String email, @RequestParam String password) {
+        return clientUserService.loginClient(email, password)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
+

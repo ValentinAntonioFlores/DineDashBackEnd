@@ -1,48 +1,50 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import java.util.UUID;
 
 @Entity
-@Table(name = "client_users") // Corrección en el nombre de la tabla
+@Table(name = "ClientUser")
 public class ClientUser {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Corrección: mejor usar IDENTITY
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID idUsuario;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+    private String nombre;
+    private String apellido;
 
-    @Column(name = "surname", nullable = false)
-    private String surname;
-
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
-    private String password;
+    private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
+
+    private String imagenPerfil; // URL de la imagen de perfil
 
     public ClientUser() {}
 
-    public ClientUser(String name, String surname, String email, String password) {
-        this.name = name;
-        this.surname = surname;
+    public ClientUser(String nombre, String apellido, String email, String contraseña, String imagenPerfil) {
+        this.nombre = nombre;
+        this.apellido = apellido;
         this.email = email;
-        this.password = password;
+        this.contraseña = contraseña;
+        this.imagenPerfil = imagenPerfil;
     }
 
-    // 📌 Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public UUID getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(UUID idUsuario) { this.idUsuario = idUsuario; }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public String getSurname() { return surname; }
-    public void setSurname(String surname) { this.surname = surname; }
+    public String getApellido() { return apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getPassword() { return password; }
-    public void setPassword(String password) { this.password = password; }
+    public String getContraseña() { return contraseña; }
+    public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+
+    public String getImagenPerfil() { return imagenPerfil; }
 }
