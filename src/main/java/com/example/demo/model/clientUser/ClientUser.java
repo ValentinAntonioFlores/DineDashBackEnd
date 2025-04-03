@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.model.clientUser;
 
 import jakarta.persistence.*;
 import java.util.UUID;
@@ -19,16 +19,14 @@ public class ClientUser {
 
     private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
 
-    private String imagenPerfil; // URL de la imagen de perfil
 
     public ClientUser() {}
 
-    public ClientUser(String nombre, String apellido, String email, String contraseña, String imagenPerfil) {
+    public ClientUser(String nombre, String apellido, String email, String contraseña) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.contraseña = contraseña;
-        this.imagenPerfil = imagenPerfil;
     }
 
     public UUID getIdUsuario() { return idUsuario; }
@@ -45,6 +43,4 @@ public class ClientUser {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
-
-    public String getImagenPerfil() { return imagenPerfil; }
 }

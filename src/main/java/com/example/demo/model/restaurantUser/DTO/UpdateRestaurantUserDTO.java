@@ -1,0 +1,25 @@
+package com.example.demo.model.restaurantUser.DTO;
+
+
+public class UpdateRestaurantUserDTO {
+    private String nombreRestaurante;
+    private String email;
+    private String contraseña;
+
+    public UpdateRestaurantUserDTO() {}
+
+    public UpdateRestaurantUserDTO(String nombreRestaurante, String email, String contraseña) {
+        this.nombreRestaurante = nombreRestaurante;
+        this.email = email;
+        this.contraseña = contraseña;
+    }
+
+    public String getNombreRestaurante() { return nombreRestaurante; }
+    public void setNombreRestaurante(String nombreRestaurante) { this.nombreRestaurante = nombreRestaurante; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getContraseña() { return contraseña; }
+    public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+}

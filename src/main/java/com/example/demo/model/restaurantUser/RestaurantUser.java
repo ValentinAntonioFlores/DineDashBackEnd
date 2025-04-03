@@ -1,4 +1,4 @@
-package com.example.demo.model;
+package com.example.demo.model.restaurantUser;
 
 import jakarta.persistence.*;
 import java.util.UUID;
