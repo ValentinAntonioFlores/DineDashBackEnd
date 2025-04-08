@@ -1,11 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.clientUser.DTO.ClientUserDTO;
-import com.example.demo.model.clientUser.DTO.ClientUserResponseDTO;
-import com.example.demo.model.clientUser.DTO.CreateClientUserDTO;
-import com.example.demo.model.clientUser.DTO.UpdateClientUserDTO;
+import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.services.ClientUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +26,7 @@ public class ClientUserController {
     }
 
     // ✔ Obtener usuario por ID
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<ClientUserDTO> getUserById(@PathVariable UUID id) {
         Optional<ClientUserDTO> user = clientUserService.getClientById(id);
         return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
@@ -41,21 +39,21 @@ public class ClientUserController {
     }
 
     // ✔ Actualizar usuario (Modificación)
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity<ClientUserDTO> updateUser(@PathVariable UUID id, @RequestBody UpdateClientUserDTO updatedUserDTO) {
         return ResponseEntity.ok(clientUserService.updateClient(id, updatedUserDTO));
     }
 
     // ✔ Eliminar usuario (Baja)
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity<ClientUserResponseDTO> deleteUser(@PathVariable UUID id) {
         return ResponseEntity.ok(clientUserService.deleteClient(id));
     }
 
     // ✔ Iniciar sesión
-    @PostMapping("/login")
-    public ResponseEntity<ClientUserDTO> loginUser(@RequestParam String email, @RequestParam String password) {
-        Optional<ClientUserDTO> user = clientUserService.loginClient(email, password);
-        return user.map(ResponseEntity::ok).orElse(ResponseEntity.status(401).build());
+    @PostMapping("login")
+    public ResponseEntity<LoginClientUserDTO> loginUser(@RequestParam String email, @RequestParam String password) {
+        Optional<LoginClientUserDTO> user = clientUserService.loginClient(email, password);
+        return user.map(ResponseEntity::ok).orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 }

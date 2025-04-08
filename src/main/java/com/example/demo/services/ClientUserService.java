@@ -1,10 +1,7 @@
 package com.example.demo.services;
 
+import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.model.clientUser.ClientUser;
-import com.example.demo.model.clientUser.DTO.ClientUserDTO;
-import com.example.demo.model.clientUser.DTO.ClientUserResponseDTO;
-import com.example.demo.model.clientUser.DTO.CreateClientUserDTO;
-import com.example.demo.model.clientUser.DTO.UpdateClientUserDTO;
 import com.example.demo.repository.ClientUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +28,7 @@ public class ClientUserService {
                 clientUserDTO.getNombre(),
                 clientUserDTO.getApellido(),
                 clientUserDTO.getEmail(),
-                clientUserDTO.getContraseña()
+                clientUserDTO.getContraseña() // Contraseña sin encriptar
         );
 
         ClientUser savedUser = clientUserRepository.save(newUser);
@@ -45,65 +42,57 @@ public class ClientUserService {
 
     // ✔ Obtener usuario por ID
     public Optional<ClientUserDTO> getClientById(UUID id) {
-        return clientUserRepository.findById(id)
-                .map(client -> new ClientUserDTO(
-                        client.getIdUsuario(),
-                        client.getNombre(),
-                        client.getApellido(),
-                        client.getEmail()
-                ));
+        return clientUserRepository.findById(id).map(user -> new ClientUserDTO(
+                user.getIdUsuario(),
+                user.getNombre(),
+                user.getApellido(),
+                user.getEmail()
+        ));
     }
 
     // ✔ Obtener todos los usuarios
     public List<ClientUserDTO> getAllClients() {
-        return clientUserRepository.findAll().stream()
-                .map(client -> new ClientUserDTO(
-                        client.getIdUsuario(),
-                        client.getNombre(),
-                        client.getApellido(),
-                        client.getEmail()
-                ))
-                .collect(Collectors.toList());
+        return clientUserRepository.findAll().stream().map(user -> new ClientUserDTO(
+                user.getIdUsuario(),
+                user.getNombre(),
+                user.getApellido(),
+                user.getEmail()
+        )).collect(Collectors.toList());
     }
 
-    // ✔ Actualizar un usuario (Modificación)
+    // ✔ Actualizar usuario (Modificación)
     public ClientUserDTO updateClient(UUID id, UpdateClientUserDTO updatedUserDTO) {
-        return clientUserRepository.findById(id).map(client -> {
-            if (updatedUserDTO.getNombre() != null) client.setNombre(updatedUserDTO.getNombre());
-            if (updatedUserDTO.getApellido() != null) client.setApellido(updatedUserDTO.getApellido());
-            if (updatedUserDTO.getEmail() != null) client.setEmail(updatedUserDTO.getEmail());
-            if (updatedUserDTO.getContraseña() != null) client.setContraseña(updatedUserDTO.getContraseña());
+        ClientUser user = clientUserRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setNombre(updatedUserDTO.getNombre());
+        user.setApellido(updatedUserDTO.getApellido());
+        user.setContraseña(updatedUserDTO.getContraseña()); // Contraseña sin encriptar
 
-            ClientUser savedUser = clientUserRepository.save(client);
-            return new ClientUserDTO(
-                    savedUser.getIdUsuario(),
-                    savedUser.getNombre(),
-                    savedUser.getApellido(),
-                    savedUser.getEmail()
-            );
-        }).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        ClientUser updatedUser = clientUserRepository.save(user);
+        return new ClientUserDTO(
+                updatedUser.getIdUsuario(),
+                updatedUser.getNombre(),
+                updatedUser.getApellido(),
+                updatedUser.getEmail()
+        );
     }
 
-    // ✔ Eliminar un usuario (Baja)
+    // ✔ Eliminar usuario (Baja)
     public ClientUserResponseDTO deleteClient(UUID id) {
-        if (!clientUserRepository.existsById(id)) {
-            throw new RuntimeException("Usuario no encontrado");
-        }
-        clientUserRepository.deleteById(id);
-        return new ClientUserResponseDTO("Usuario eliminado correctamente", id);
+        ClientUser user = clientUserRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        clientUserRepository.delete(user);
+        return new ClientUserResponseDTO("Usuario eliminado exitosamente", user.getIdUsuario());
     }
 
     // ✔ Iniciar sesión
-    public Optional<ClientUserDTO> loginClient(String email, String password) {
+    public Optional<LoginClientUserDTO> loginClient(String email, String password) {
         Optional<ClientUser> client = clientUserRepository.findByEmail(email);
-        if (client.isPresent() && client.get().getContraseña().equals(password)) {
-            ClientUser user = client.get();
-            return Optional.of(new ClientUserDTO(
-                    user.getIdUsuario(),
-                    user.getNombre(),
-                    user.getApellido(),
-                    user.getEmail()
-            ));
+        if (client.isPresent() && password.equals(client.get().getContraseña())) { // Comparar contraseñas sin encriptar
+            ClientUser loggedInClient = client.get();
+            LoginClientUserDTO responseDTO = new LoginClientUserDTO(
+                    loggedInClient.getEmail(),
+                    loggedInClient.getContraseña()
+            );
+            return Optional.of(responseDTO);
         }
         return Optional.empty();
     }

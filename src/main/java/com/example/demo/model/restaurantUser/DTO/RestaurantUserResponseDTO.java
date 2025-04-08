@@ -6,7 +6,7 @@ public class RestaurantUserResponseDTO {
     private String message;
     private UUID id;
 
-    public RestaurantUserResponseDTO() {}
+    public RestaurantUserResponseDTO(UUID idRestaurante, String nombreRestaurante, String email) {}
 
     public RestaurantUserResponseDTO(String message, UUID id) {
         this.message = message;
@@ -18,4 +18,5 @@ public class RestaurantUserResponseDTO {
 
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
+
 }

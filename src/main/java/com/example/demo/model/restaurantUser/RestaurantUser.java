@@ -4,15 +4,12 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "RestaurantUser")
+@Table(name = "RestaurantUsers")
 public class RestaurantUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID idAdmin;
-
-    @Column(nullable = false)
-    private UUID idRestaurante; // FK a Restaurante
+    private UUID idRestaurante; // PK
 
     private String nombreRestaurante;
 
@@ -23,15 +20,11 @@ public class RestaurantUser {
 
     public RestaurantUser() {}
 
-    public RestaurantUser(UUID idRestaurante, String nombreRestaurante, String email, String contraseña) {
-        this.idRestaurante = idRestaurante;
+    public RestaurantUser(String nombreRestaurante, String email, String contraseña) {
         this.nombreRestaurante = nombreRestaurante;
         this.email = email;
         this.contraseña = contraseña;
     }
-
-    public UUID getIdAdmin() { return idAdmin; }
-    public void setIdAdmin(UUID idAdmin) { this.idAdmin = idAdmin; }
 
     public UUID getIdRestaurante() { return idRestaurante; }
     public void setIdRestaurante(UUID idRestaurante) { this.idRestaurante = idRestaurante; }

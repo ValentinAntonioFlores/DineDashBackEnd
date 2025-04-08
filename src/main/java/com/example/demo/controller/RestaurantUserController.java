@@ -7,24 +7,32 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/restaurantUsers")
-@CrossOrigin(origins = "http://localhost:3000") // Permite conexiones desde React
+@CrossOrigin(origins = "http://localhost:3000")
 public class RestaurantUserController {
 
     @Autowired
     private RestaurantUserService restaurantUserService;
 
-    // ✔ Crear un usuario restaurante (Alta)
     @PostMapping("register")
-    public ResponseEntity<RestaurantUserResponseDTO> registerUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
-        RestaurantUserResponseDTO response = restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> registerUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
+        CreateRestaurantUserDTO restaurantUserDTO = new CreateRestaurantUserDTO(
+                createRestaurantUserDTO.getNombreRestaurante(),
+                createRestaurantUserDTO.getEmail(),
+                createRestaurantUserDTO.getContraseña()
+        );
+        try {
+            RestaurantUserResponseDTO response = restaurantUserService.registerRestaurantUser(restaurantUserDTO);
+            return ResponseEntity.ok("Usuario registrado existosamente con nombre: " + restaurantUserDTO.getEmail());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    // ✔ Obtener usuario por ID
     @GetMapping("{id}")
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {
         return restaurantUserService.getRestaurantUserById(id)
@@ -32,32 +40,42 @@ public class RestaurantUserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // ✔ Obtener todos los usuarios restaurantes
     @GetMapping
     public ResponseEntity<List<RestaurantUserDTO>> getAllUsers() {
         List<RestaurantUserDTO> users = restaurantUserService.getAllRestaurantUsers();
         return ResponseEntity.ok(users);
     }
-
-    // ✔ Actualizar usuario restaurante (Modificación)
     @PutMapping("{id}")
-    public ResponseEntity<RestaurantUserResponseDTO> updateUser(@PathVariable UUID id, @RequestBody UpdateRestaurantUserDTO updateRestaurantUserDTO) {
-        RestaurantUserResponseDTO response = restaurantUserService.updateRestaurantUser(id, updateRestaurantUserDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<String> updateUser(@PathVariable UUID id, @RequestBody UpdateRestaurantUserDTO updateRestaurantUserDTO) {
+        try {
+            RestaurantUserResponseDTO response = restaurantUserService.updateRestaurantUser(id, updateRestaurantUserDTO);
+            return ResponseEntity.ok("User updated successfully with name: " + updateRestaurantUserDTO.getNombreRestaurante() + " and email: " + updateRestaurantUserDTO.getEmail());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    // ✔ Eliminar usuario restaurante (Baja)
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable UUID id) {
-        restaurantUserService.deleteRestaurantUser(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
+        try {
+            Optional<RestaurantUserDTO> user = restaurantUserService.getRestaurantUserById(id);
+            if (user.isPresent()) {
+                restaurantUserService.deleteRestaurantUser(id);
+                return ResponseEntity.ok("User deleted successfully with name: " + user.get().getNombreRestaurante());
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
-
-    // ✔ Iniciar sesión
     @PostMapping("login")
-    public ResponseEntity<RestaurantUserResponseDTO> loginUser(@RequestParam String email, @RequestParam String password) {
-        return restaurantUserService.loginRestaurantUser(email, password)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<String> loginUser(@RequestParam String email, @RequestParam String password) {
+        Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(email, password);
+        if (user.isPresent()) {
+            return ResponseEntity.ok("Login successful for user: " + email);
+        } else {
+            return ResponseEntity.status(401).body("Invalid email or password");
+        }
     }
 }
