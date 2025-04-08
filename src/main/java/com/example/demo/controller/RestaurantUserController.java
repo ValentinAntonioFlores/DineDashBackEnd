@@ -42,7 +42,7 @@ public class RestaurantUserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RestaurantUserDTO>> getAllUsers() {
+    public ResponseEntity<List<RestaurantUserDTO>> getAllRestaurants() {
         List<RestaurantUserDTO> users = restaurantUserService.getAllRestaurantUsers();
         return ResponseEntity.ok(users);
     }

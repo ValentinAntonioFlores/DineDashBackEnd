@@ -8,13 +8,13 @@ import java.util.Date;
 @Component
 public class JwtUtility {
 
-    private final String SECRET_KEY = "your_secret_key";
+    private final String SECRET_KEY = System.getenv("JWT_SECRET_KEY");
 
     public String generateToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 horas
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10 hours
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
     }
