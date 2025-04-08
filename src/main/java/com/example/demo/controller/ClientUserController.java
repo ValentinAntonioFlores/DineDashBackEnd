@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.jwt.JwtUtility;
+import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.services.ClientUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,10 @@ public class ClientUserController {
 
     @Autowired
     private ClientUserService clientUserService;
+    @Autowired
+    private JwtUtility jwtUtility;
+    @Autowired
+    private TokenBlackListService tokenBlackListService;
 
     // ✔ Crear un usuario (Alta)
     @PostMapping("register")
@@ -52,8 +58,21 @@ public class ClientUserController {
 
     // ✔ Iniciar sesión
     @PostMapping("login")
-    public ResponseEntity<LoginClientUserDTO> loginUser(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<String> loginUser(@RequestParam String email, @RequestParam String password) {
         Optional<LoginClientUserDTO> user = clientUserService.loginClient(email, password);
-        return user.map(ResponseEntity::ok).orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+        if (user.isPresent()) {
+            String token = jwtUtility.generateToken(email);
+            return ResponseEntity.ok("Login successful. Token: " + token);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        }
+    }
+
+    // ✔ Cerrar sesión
+    @PostMapping("logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7); // Remove "Bearer " prefix
+        tokenBlackListService.addToBlacklist(jwtToken);
+        return ResponseEntity.ok("Logout successful");
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.jwt.JwtUtility;
+import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.services.RestaurantUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +19,16 @@ public class RestaurantUserController {
 
     @Autowired
     private RestaurantUserService restaurantUserService;
+    @Autowired
+    private JwtUtility jwtUtility;
+    @Autowired
+    private TokenBlackListService tokenBlackListService;
 
     @PostMapping("register")
-    public ResponseEntity<String> registerUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
-        CreateRestaurantUserDTO restaurantUserDTO = new CreateRestaurantUserDTO(
-                createRestaurantUserDTO.getNombreRestaurante(),
-                createRestaurantUserDTO.getEmail(),
-                createRestaurantUserDTO.getContraseña()
-        );
+    public ResponseEntity<String> registerRestaurantUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
         try {
-            RestaurantUserResponseDTO response = restaurantUserService.registerRestaurantUser(restaurantUserDTO);
-            return ResponseEntity.ok("Usuario registrado existosamente con nombre: " + restaurantUserDTO.getEmail());
+            RestaurantUserResponseDTO response = restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
+            return ResponseEntity.ok("Restaurant user registered successfully: " + createRestaurantUserDTO.getNombreRestaurante());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -70,12 +71,20 @@ public class RestaurantUserController {
         }
     }
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@RequestParam String email, @RequestParam String password) {
+    public ResponseEntity<String> loginRestaurantUser(@RequestParam String email, @RequestParam String password) {
         Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(email, password);
         if (user.isPresent()) {
-            return ResponseEntity.ok("Login successful for user: " + email);
+            String token = jwtUtility.generateToken(email);
+            return ResponseEntity.ok("Login successful. Token: " + token);
         } else {
             return ResponseEntity.status(401).body("Invalid email or password");
         }
+    }
+
+    @PostMapping("logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {
+        String jwtToken = token.substring(7); // Remove "Bearer " prefix
+        tokenBlackListService.addToBlacklist(jwtToken);
+        return ResponseEntity.ok("Logout successful");
     }
 }
