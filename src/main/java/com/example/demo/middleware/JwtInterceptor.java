@@ -12,12 +12,13 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @Component
 public class JwtInterceptor implements HandlerInterceptor {
 
+    private final JwtUtility jwtUtility;
+    private final TokenBlackListService tokenBlackListService;
     @Autowired
-    private JwtUtility jwtUtility;
-
-    @Autowired
-    private TokenBlackListService tokenBlackListService;
-
+    public JwtInterceptor(JwtUtility jwtUtility, TokenBlackListService tokenBlackListService) {
+        this.jwtUtility = jwtUtility;
+        this.tokenBlackListService = tokenBlackListService;
+    }
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
         String authHeader = request.getHeader("Authorization");
