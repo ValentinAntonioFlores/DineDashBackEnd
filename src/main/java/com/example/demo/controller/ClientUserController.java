@@ -58,10 +58,10 @@ public class ClientUserController {
 
     // ✔ Iniciar sesión
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@RequestParam String email, @RequestParam String password) {
-        Optional<LoginClientUserDTO> user = clientUserService.loginClient(email, password);
+    public ResponseEntity<String> loginUser(@RequestBody LoginClientUserDTO loginRequest) {
+        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginRequest.getEmail(), loginRequest.getContraseña());
         if (user.isPresent()) {
-            String token = jwtUtility.generateToken(email);
+            String token = jwtUtility.generateToken(loginRequest.getEmail());
             return ResponseEntity.ok("Login successful. Token: " + token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");

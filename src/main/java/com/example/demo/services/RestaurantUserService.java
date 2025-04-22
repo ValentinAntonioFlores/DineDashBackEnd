@@ -6,8 +6,6 @@ import com.example.demo.repository.RestaurantUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -38,13 +36,9 @@ public class RestaurantUserService {
         );
     }
 
-    public Optional<RestaurantUserDTO> getRestaurantUserById(UUID id) {
+    public RestaurantUser getRestaurantUserById(UUID id) {
         return restaurantUserRepository.findById(id)
-                .map(user -> new RestaurantUserDTO(
-                        user.getIdRestaurante(),
-                        user.getNombreRestaurante(),
-                        user.getEmail()
-                ));
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
     public List<RestaurantUserDTO> getAllRestaurantUsers() {
