@@ -5,6 +5,7 @@ import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import com.example.demo.repository.ReservationRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +14,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class ReservationService {
 
     @Autowired
     private ReservationRepository reservationRepository;
 
     public Reservation createReservation(RestaurantTable table, RestaurantUser user, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+        if (startTime.isAfter(endTime)) {
+            throw new IllegalArgumentException("Start time must be before end time.");
+        }
+
         boolean hasOverlap = reservationRepository.existsByTableAndStartTimeBeforeAndEndTimeAfter(table, startTime, endTime);
         if (hasOverlap) {
             throw new IllegalArgumentException("The table is already reserved for the selected time range.");
@@ -35,22 +41,42 @@ public class ReservationService {
     }
 
     public Reservation getReservationById(UUID reservationId) {
-        return reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found with ID: " + reservationId));
+        try {
+            return reservationRepository.findById(reservationId)
+                    .orElseThrow(() -> new ReservationNotFoundException("Reservation not found with ID: " + reservationId));
+        } catch (ReservationNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
-    public Reservation cancelReservation(UUID reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found with ID: " + reservationId));
 
+    public Reservation cancelReservation(UUID reservationId) {
+        Reservation reservation = getReservationById(reservationId);
         reservation.setStatus(ReservationStatus.REJECTED);
         return reservationRepository.save(reservation);
     }
 
     public Reservation updateReservationStatus(UUID reservationId, ReservationStatus status) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new IllegalArgumentException("Reservation not found with ID: " + reservationId));
-
+        Reservation reservation = getReservationById(reservationId);
         reservation.setStatus(status);
         return reservationRepository.save(reservation);
+    }
+
+
+    public List<Reservation> getAllReservations() {
+        return reservationRepository.findAll();
+    }
+
+    public List<Reservation> getReservationsByUser(RestaurantUser user) {
+        return reservationRepository.findByUser(user);
+    }
+
+    public List<Reservation> getReservationsByTable(RestaurantTable table) {
+        return reservationRepository.findByTable(table);
+    }
+
+
+    private static class ReservationNotFoundException extends Exception {
+        public ReservationNotFoundException(String s) {
+        }
     }
 }
