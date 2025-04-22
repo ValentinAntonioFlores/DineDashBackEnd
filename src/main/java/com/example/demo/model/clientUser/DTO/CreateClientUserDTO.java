@@ -1,21 +1,25 @@
 package com.example.demo.model.clientUser.DTO;
 
-import org.antlr.v4.runtime.misc.NotNull;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 
 public class CreateClientUserDTO {
 
     @NotNull
+    @JsonProperty("firstName")
     private String nombre;
 
     @NotNull
+    @JsonProperty("lastName")
     private String apellido;
 
     @NotNull
+    @JsonProperty("email")
     private String email;
 
     @NotNull
+    @JsonProperty("password")
     private String contraseña;
-
 
     public CreateClientUserDTO() {}
 
