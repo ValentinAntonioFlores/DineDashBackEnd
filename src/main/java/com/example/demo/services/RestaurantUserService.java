@@ -36,7 +36,7 @@ public class RestaurantUserService {
         );
     }
 
-    public Optional<RestaurantUserDTO> getRestaurantUserById(UUID id) {
+    public RestaurantUser getRestaurantUserById(UUID id) {
         return restaurantUserRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
