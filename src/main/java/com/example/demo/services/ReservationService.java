@@ -19,7 +19,7 @@ public class ReservationService {
     private ReservationRepository reservationRepository;
 
     public Reservation createReservation(RestaurantTable table, RestaurantUser user, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
-        boolean hasOverlap = reservationRepository.existsByTableAndTimeRange(table.getId(), startTime, endTime);
+        boolean hasOverlap = reservationRepository.existsByTableAndStartTimeBeforeAndEndTimeAfter(table, startTime, endTime);
         if (hasOverlap) {
             throw new IllegalArgumentException("The table is already reserved for the selected time range.");
         }
