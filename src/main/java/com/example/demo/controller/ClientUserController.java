@@ -73,7 +73,7 @@ public class ClientUserController {
     // ✔ Iniciar sesión
     @PostMapping("login")
     public ResponseEntity<String> loginUser(@RequestBody LoginClientUserDTO loginDTO) {
-        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginDTO.getEmail(), loginDTO.getPassword());
+        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginDTO.getEmail(), loginDTO.getContraseña());
         if (user.isPresent()) {
             String token = jwtUtility.generateToken(loginDTO.getEmail());
             return ResponseEntity.ok("Login successful. Token: " + token);

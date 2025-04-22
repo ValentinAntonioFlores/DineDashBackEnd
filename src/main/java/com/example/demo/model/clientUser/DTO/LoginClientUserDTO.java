@@ -15,6 +15,6 @@ public class LoginClientUserDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getPassword() { return contraseña; }
+    public String getContraseña() { return contraseña; }
     public void setContraseña(String password) { this.contraseña = contraseña; }
 }
