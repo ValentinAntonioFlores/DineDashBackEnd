@@ -24,7 +24,7 @@ public class TableService {
     private RestaurantUserRepository restaurantUserRepository;
 
     public List<TableDTO> getTablesByRestaurant(UUID restaurantId) {
-        List<RestaurantTable> tables = tableRepository.findByRestaurantId(restaurantId);
+        List<RestaurantTable> tables = tableRepository.findByRestaurant_IdRestaurante(restaurantId);
         return tables.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
     public RestaurantTable getTableById(UUID tableId) {
@@ -33,7 +33,7 @@ public class TableService {
     }
 
     public TableDTO createTable(UUID restaurantId, TableDTO tableDTO) {
-        if (tableRepository.existsByRestaurantIdAndPositionXAndPositionY(restaurantId, tableDTO.getPositionX(), tableDTO.getPositionY())) {
+        if (tableRepository.existsByRestaurant_IdRestauranteAndPositionXAndPositionY(restaurantId, tableDTO.getPositionX(), tableDTO.getPositionY())) {
             throw new IllegalArgumentException("A table already exists at the specified position.");
         }
 

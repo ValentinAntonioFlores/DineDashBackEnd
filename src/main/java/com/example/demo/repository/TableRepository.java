@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @Repository
 public interface TableRepository extends JpaRepository<RestaurantTable, UUID> {
-    List<RestaurantTable> findByRestaurantId(UUID restaurantId);
 
-    boolean existsByRestaurantIdAndPositionXAndPositionY(UUID restaurantId, int positionX, int positionY);
+    List<RestaurantTable> findByRestaurant_IdRestaurante(UUID restaurantId);
+    boolean existsByRestaurant_IdRestauranteAndPositionXAndPositionY(UUID restaurantId, int positionX, int positionY);
+
 }

@@ -21,7 +21,7 @@ public class RestaurantTable {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "restaurant_id", nullable = false)
+    @JoinColumn(name = "restaurant_id", referencedColumnName = "idRestaurante", nullable = false)
     private RestaurantUser restaurant;
 
     private int capacity;
