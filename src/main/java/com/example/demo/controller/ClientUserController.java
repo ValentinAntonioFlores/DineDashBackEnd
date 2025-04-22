@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -71,10 +72,10 @@ public class ClientUserController {
 
     // ✔ Iniciar sesión
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginClientUserDTO loginDTO) {
-        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginDTO.getEmail(), loginDTO.getPassword());
+    public ResponseEntity<String> loginUser(@RequestBody LoginClientUserDTO loginRequest) {
+        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginRequest.getEmail(), loginRequest.getContraseña());
         if (user.isPresent()) {
-            String token = jwtUtility.generateToken(loginDTO.getEmail());
+            String token = jwtUtility.generateToken(loginRequest.getEmail());
             return ResponseEntity.ok("Login successful. Token: " + token);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");

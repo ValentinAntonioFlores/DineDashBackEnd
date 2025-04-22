@@ -71,10 +71,10 @@ public class RestaurantUserController {
         }
     }
     @PostMapping("login")
-    public ResponseEntity<String> loginRestaurantUser(@RequestParam String email, @RequestParam String password) {
-        Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(email, password);
+    public ResponseEntity<String> loginRestaurantUser(@RequestBody LoginRestaurantUserDTO loginRequest) {
+        Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(loginRequest.getEmail(), loginRequest.getContraseña());
         if (user.isPresent()) {
-            String token = jwtUtility.generateToken(email);
+            String token = jwtUtility.generateToken(loginRequest.getEmail());
             return ResponseEntity.ok("Login successful. Token: " + token);
         } else {
             return ResponseEntity.status(401).body("Invalid email or password");
