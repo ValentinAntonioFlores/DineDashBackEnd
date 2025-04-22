@@ -14,6 +14,4 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     boolean existsByTableAndStartTimeBeforeAndEndTimeAfter(RestaurantTable table, LocalDateTime startTime, LocalDateTime endTime);
 
     List<Reservation> findByTable(RestaurantTable table);
-
-    boolean existsByTableAndTimeRange(UUID id, LocalDateTime startTime, LocalDateTime endTime);
 }
