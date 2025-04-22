@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.restaurantUser.DTO.*;
+import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.services.RestaurantUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class RestaurantUserController {
     @PostMapping("register")
     public ResponseEntity<String> registerRestaurantUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
         try {
-            RestaurantUserResponseDTO response = restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
+            restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
             return ResponseEntity.ok("Restaurant user registered successfully: " + createRestaurantUserDTO.getNombreRestaurante());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -36,9 +37,13 @@ public class RestaurantUserController {
 
     @GetMapping("{id}")
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {
-        return restaurantUserService.getRestaurantUserById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
+        if (user.isPresent()) {
+            RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail());
+            return ResponseEntity.ok(userDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
@@ -46,10 +51,11 @@ public class RestaurantUserController {
         List<RestaurantUserDTO> users = restaurantUserService.getAllRestaurantUsers();
         return ResponseEntity.ok(users);
     }
+
     @PutMapping("{id}")
     public ResponseEntity<String> updateUser(@PathVariable UUID id, @RequestBody UpdateRestaurantUserDTO updateRestaurantUserDTO) {
         try {
-            RestaurantUserResponseDTO response = restaurantUserService.updateRestaurantUser(id, updateRestaurantUserDTO);
+            restaurantUserService.updateRestaurantUser(id, updateRestaurantUserDTO);
             return ResponseEntity.ok("User updated successfully with name: " + updateRestaurantUserDTO.getNombreRestaurante() + " and email: " + updateRestaurantUserDTO.getEmail());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -59,10 +65,10 @@ public class RestaurantUserController {
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteUser(@PathVariable UUID id) {
         try {
-            Optional<RestaurantUserDTO> user = restaurantUserService.getRestaurantUserById(id);
+            RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
             if (user.isPresent()) {
                 restaurantUserService.deleteRestaurantUser(id);
-                return ResponseEntity.ok("User deleted successfully with name: " + user.get().getNombreRestaurante());
+                return ResponseEntity.ok("User deleted successfully with name: " + user.getNombreRestaurante());
             } else {
                 return ResponseEntity.notFound().build();
             }
@@ -70,6 +76,7 @@ public class RestaurantUserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
     @PostMapping("login")
     public ResponseEntity<String> loginRestaurantUser(@RequestBody LoginRestaurantUserDTO loginRequest) {
         Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(loginRequest.getEmail(), loginRequest.getContraseña());

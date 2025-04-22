@@ -37,4 +37,8 @@ public class RestaurantUser {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+
+    public boolean isPresent() {
+        return idRestaurante != null;
+    }
 }
