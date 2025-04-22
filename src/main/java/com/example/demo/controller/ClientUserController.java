@@ -4,9 +4,11 @@ import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.services.ClientUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,9 +28,21 @@ public class ClientUserController {
     private TokenBlackListService tokenBlackListService;
 
     // ✔ Crear un usuario (Alta)
-    @PostMapping("register")
-    public ResponseEntity<ClientUserDTO> registerUser(@RequestBody CreateClientUserDTO clientUserDTO) {
-        return ResponseEntity.ok(clientUserService.registerClient(clientUserDTO));
+    @PostMapping("/register")
+    public ResponseEntity<String> registerUser(@RequestBody @Valid CreateClientUserDTO createClientUserDTO, BindingResult bindingResult) {
+        // If there are validation errors, return a bad request response with the error messages
+        if (bindingResult.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            bindingResult.getAllErrors().forEach(error -> errors.append(error.getDefaultMessage()).append(" "));
+            return ResponseEntity.badRequest().body("Validation failed: " + errors.toString());
+        }
+
+        try {
+            clientUserService.registerClient(createClientUserDTO);
+            return ResponseEntity.ok("User registered successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     // ✔ Obtener usuario por ID
