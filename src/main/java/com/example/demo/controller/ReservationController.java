@@ -45,7 +45,7 @@ public class ReservationController {
         return ResponseEntity.ok(reservations);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("user/{userId}")
     public ResponseEntity<List<Reservation>> getReservationsByUser(@PathVariable UUID userId) {
         RestaurantUser user = restaurantUserService.getRestaurantUserById(userId);
         List<Reservation> reservations = reservationService.getReservationsByUser(user);
