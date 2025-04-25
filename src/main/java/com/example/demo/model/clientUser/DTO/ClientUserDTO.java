@@ -1,13 +1,22 @@
 package com.example.demo.model.clientUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class ClientUserDTO {
 
     private UUID idUsuario;
+
+    @JsonProperty("firstName")
     private String nombre;
+
+    @JsonProperty("lastName")
     private String apellido;
+
+    @JsonProperty("email")
     private String email;
+
 
     public ClientUserDTO() {}
 
@@ -29,4 +38,5 @@ public class ClientUserDTO {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
 }

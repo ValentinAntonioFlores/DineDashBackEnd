@@ -1,12 +1,18 @@
 package com.example.demo.model.clientUser.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.antlr.v4.runtime.misc.NotNull;
 
 public class UpdateClientUserDTO {
 
+    @JsonProperty("firstname")
     private String nombre;
+
+    @JsonProperty("lastname")
     private String apellido;
+
+    @JsonProperty("password")
     private String contraseña; // Opcional, solo se actualiza si se proporciona
 
     public UpdateClientUserDTO() {}

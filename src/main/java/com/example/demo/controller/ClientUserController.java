@@ -2,7 +2,9 @@ package com.example.demo.controller;
 
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
+import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.clientUser.DTO.*;
+import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.services.ClientUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/clientUsers")
@@ -23,27 +23,36 @@ public class ClientUserController {
     @Autowired
     private ClientUserService clientUserService;
     @Autowired
+    private ClientUserRepository clientUserRepository;
+    @Autowired
     private JwtUtility jwtUtility;
     @Autowired
     private TokenBlackListService tokenBlackListService;
 
-    // ✔ Crear un usuario (Alta)
+
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody @Valid CreateClientUserDTO createClientUserDTO, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, String>> registerUser(@RequestBody @Valid CreateClientUserDTO createClientUserDTO, BindingResult bindingResult) {
         // If there are validation errors, return a bad request response with the error messages
         if (bindingResult.hasErrors()) {
             StringBuilder errors = new StringBuilder();
             bindingResult.getAllErrors().forEach(error -> errors.append(error.getDefaultMessage()).append(" "));
-            return ResponseEntity.badRequest().body("Validation failed: " + errors.toString());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Validation failed: " + errors.toString());
+            return ResponseEntity.badRequest().body(errorResponse);
         }
 
         try {
             clientUserService.registerClient(createClientUserDTO);
-            return ResponseEntity.ok("User registered successfully.");
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "User registered successfully.");
+            return ResponseEntity.ok(successResponse);
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
+
 
     // ✔ Obtener usuario por ID
     @GetMapping("{id}")
@@ -51,6 +60,21 @@ public class ClientUserController {
         Optional<ClientUserDTO> user = clientUserService.getClientById(id);
         return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
+
+    // ✔ Endpoint to get user by email
+    @GetMapping("/clientUsers/{email}")
+    public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
+        Optional<ClientUserDTO> userDTO = clientUserService.getClientByEmail(email);
+
+        if (userDTO.isPresent()) {
+            System.out.println("User found: " + userDTO.get().getNombre());
+            return ResponseEntity.ok(userDTO.get().getNombre());
+        } else {
+            System.out.println("User not found with email: " + email);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+    }
+
 
     // ✔ Obtener todos los usuarios
     @GetMapping
@@ -72,15 +96,27 @@ public class ClientUserController {
 
     // ✔ Iniciar sesión
     @PostMapping("login")
-    public ResponseEntity<String> loginUser(@RequestBody LoginClientUserDTO loginDTO) {
-        Optional<LoginClientUserDTO> user = clientUserService.loginClient(loginDTO.getEmail(), loginDTO.getPassword());
+    public ResponseEntity<LoginResponseDTO> loginUser(@RequestBody LoginClientUserDTO loginDTO) {
+        Optional<ClientUserDTO> user = clientUserService.loginClient(loginDTO.getEmail(), loginDTO.getContraseña());
+
         if (user.isPresent()) {
-            String token = jwtUtility.generateToken(loginDTO.getEmail());
-            return ResponseEntity.ok("Login successful. Token: " + token);
+            ClientUserDTO loggedUser = user.get();
+            String token = jwtUtility.generateToken(loggedUser.getEmail());
+
+            LoginResponseDTO response = new LoginResponseDTO(
+                    token,
+                    loggedUser.getNombre(),
+                    loggedUser.getApellido(),
+                    loggedUser.getEmail()
+            );
+
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+
 
     // ✔ Cerrar sesión
     @PostMapping("logout")

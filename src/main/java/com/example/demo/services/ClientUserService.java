@@ -50,6 +50,24 @@ public class ClientUserService {
         ));
     }
 
+    // ✔ Obtener usuario por email
+    public Optional<ClientUserDTO> getClientByEmail(String email) {
+        Optional<ClientUser> user = clientUserRepository.findByEmail(email);
+        if (user.isPresent()) {
+            // Convert the found user to a ClientUserDTO
+            ClientUser clientUser = user.get();
+            ClientUserDTO clientUserDTO = new ClientUserDTO(
+                    clientUser.getIdUsuario(),
+                    clientUser.getNombre(),  // firstName
+                    clientUser.getApellido(), // lastName
+                    clientUser.getEmail()
+            );
+            return Optional.of(clientUserDTO);
+        } else {
+            return Optional.empty();  // User not found
+        }
+    }
+
     // ✔ Obtener todos los usuarios
     public List<ClientUserDTO> getAllClients() {
         return clientUserRepository.findAll().stream().map(user -> new ClientUserDTO(
@@ -84,16 +102,24 @@ public class ClientUserService {
     }
 
     // ✔ Iniciar sesión
-    public Optional<LoginClientUserDTO> loginClient(String email, String password) {
-        Optional<ClientUser> client = clientUserRepository.findByEmail(email);
-        if (client.isPresent() && password.equals(client.get().getContraseña())) { // Comparar contraseñas sin encriptar
-            ClientUser loggedInClient = client.get();
-            LoginClientUserDTO responseDTO = new LoginClientUserDTO(
-                    loggedInClient.getEmail(),
-                    loggedInClient.getContraseña()
-            );
-            return Optional.of(responseDTO);
-        }
-        return Optional.empty();
+    public Optional<ClientUserDTO> loginClient(String email, String password) {
+        Optional<ClientUser> optionalUser = clientUserRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) return Optional.empty();
+
+        ClientUser user = optionalUser.get();
+
+        if (!user.getContraseña().equals(password)) return Optional.empty();
+
+        // Convert user to DTO (excluding password)
+        ClientUserDTO dto = new ClientUserDTO(
+                user.getIdUsuario(),
+                user.getNombre(),
+                user.getApellido(),
+                user.getEmail()
+        );
+
+        return Optional.of(dto);
     }
+
 }

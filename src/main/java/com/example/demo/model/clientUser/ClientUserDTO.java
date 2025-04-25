@@ -1,13 +1,25 @@
 package com.example.demo.model.clientUser;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class ClientUserDTO {
     private UUID idUsuario;
+
+    @JsonProperty("firstname")
     private String nombre;
+
+    @JsonProperty("lastname")
     private String apellido;
+
+    @JsonProperty("email")
     private String email;
+
+
     private String imagenPerfil;
+
+    @JsonProperty("password")
     private String contraseña;
 
     public ClientUserDTO() {}

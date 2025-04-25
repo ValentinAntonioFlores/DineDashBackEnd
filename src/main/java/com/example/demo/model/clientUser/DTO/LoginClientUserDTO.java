@@ -1,8 +1,13 @@
 package com.example.demo.model.clientUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class LoginClientUserDTO {
 
+    @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
     private String contraseña;
 
     public LoginClientUserDTO() {}
@@ -15,6 +20,6 @@ public class LoginClientUserDTO {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public String getPassword() { return contraseña; }
-    public void setContraseña(String password) { this.contraseña = contraseña; }
+    public String getContraseña() { return contraseña; }
+    public void setContraseña(String contraseña) { this.contraseña = contraseña; }
 }
