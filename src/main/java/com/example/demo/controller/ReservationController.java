@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -25,20 +26,32 @@ public class ReservationController {
     @Autowired
     private RestaurantUserService restaurantUserService;
 
-
+    @GetMapping
+    public ResponseEntity<List<Reservation>> getAllReservations() {
+        List<Reservation> reservations = reservationService.getAllReservations();
+        return ResponseEntity.ok(reservations);
+    }
 
     @GetMapping("{reservationId}")
     public ResponseEntity<Reservation> getReservationById(@PathVariable UUID reservationId) {
         Reservation reservation = reservationService.getReservationById(reservationId);
         return ResponseEntity.ok(reservation);
     }
-    @PatchMapping("{reservationId}/status")
-    public ResponseEntity<Reservation> updateReservationStatus(
-            @PathVariable UUID reservationId,
-            @RequestBody ReservationStatus status) {
-        Reservation updatedReservation = reservationService.updateReservationStatus(reservationId, status);
-        return ResponseEntity.ok(updatedReservation);
+
+    @GetMapping("table/{tableId}")
+    public ResponseEntity<List<Reservation>> getReservationsByTable(@PathVariable UUID tableId) {
+        RestaurantTable table = tableService.getTableById(tableId);
+        List<Reservation> reservations = reservationService.getReservationsByTable(table);
+        return ResponseEntity.ok(reservations);
     }
+
+    @GetMapping("user/{userId}")
+    public ResponseEntity<List<Reservation>> getReservationsByUser(@PathVariable UUID userId) {
+        RestaurantUser user = restaurantUserService.getRestaurantUserById(userId);
+        List<Reservation> reservations = reservationService.getReservationsByUser(user);
+        return ResponseEntity.ok(reservations);
+    }
+
     @PostMapping
     public ResponseEntity<Reservation> createReservation(
             @RequestParam UUID tableId,
@@ -51,4 +64,17 @@ public class ReservationController {
         return ResponseEntity.ok(reservation);
     }
 
+    @PatchMapping("{reservationId}/status")
+    public ResponseEntity<Reservation> updateReservationStatus(
+            @PathVariable UUID reservationId,
+            @RequestBody ReservationStatus status) {
+        Reservation updatedReservation = reservationService.updateReservationStatus(reservationId, status);
+        return ResponseEntity.ok(updatedReservation);
+    }
+
+    @DeleteMapping("{reservationId}")
+    public ResponseEntity<String> deleteReservation(@PathVariable UUID reservationId) {
+        reservationService.cancelReservation(reservationId);
+        return ResponseEntity.ok("Reservation canceled successfully.");
+    }
 }
