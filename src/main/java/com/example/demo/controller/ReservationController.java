@@ -25,26 +25,26 @@ public class ReservationController {
     @Autowired
     private RestaurantUserService restaurantUserService;
 
-    @PostMapping("/all")
+    @PostMapping("all")
     public ResponseEntity<List<Reservation>> getAllReservations() {
         List<Reservation> reservations = reservationService.getAllReservations();
         return ResponseEntity.ok(reservations);
     }
 
-    @PostMapping("/by-id")
+    @PostMapping("by-id")
     public ResponseEntity<Reservation> getReservationById(@RequestBody GetReservationByIdDTO dto) {
         Reservation reservation = reservationService.getReservationById(dto.getReservationId());
         return ResponseEntity.ok(reservation);
     }
 
-    @PostMapping("/by-table")
+    @PostMapping("by-table")
     public ResponseEntity<List<Reservation>> getReservationsByTable(@RequestBody GetReservationsByTableDTO dto) {
         RestaurantTable table = tableService.getTableById(dto.getTableId());
         List<Reservation> reservations = reservationService.getReservationsByTable(table);
         return ResponseEntity.ok(reservations);
     }
 
-    @PostMapping("/by-user")
+    @PostMapping("by-user")
     public ResponseEntity<List<Reservation>> getReservationsByUser(@RequestBody GetReservationsByUserDTO dto) {
         RestaurantUser user = restaurantUserService.getRestaurantUserById(dto.getUserId());
         List<Reservation> reservations = reservationService.getReservationsByUser(user);
@@ -65,13 +65,13 @@ public class ReservationController {
         return ResponseEntity.ok(reservation);
     }
 
-    @PostMapping("/update-status")
+    @PostMapping("update-status")
     public ResponseEntity<Reservation> updateReservationStatus(@RequestBody UpdateReservationStatusDTO statusDTO) {
         Reservation updatedReservation = reservationService.updateReservationStatus(statusDTO.getReservationId(), statusDTO.getStatus());
         return ResponseEntity.ok(updatedReservation);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("delete")
     public ResponseEntity<String> deleteReservation(@RequestBody DeleteReservationDTO dto) {
         reservationService.cancelReservation(dto.getReservationId());
         return ResponseEntity.ok("Reservation canceled successfully.");

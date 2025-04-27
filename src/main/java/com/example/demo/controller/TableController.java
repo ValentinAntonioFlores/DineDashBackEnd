@@ -17,7 +17,7 @@ public class TableController {
     @Autowired
     private TableService tableService;
 
-    @PostMapping("/by-restaurant")
+    @PostMapping("by-restaurant")
     public ResponseEntity<List<TableDTO>> getTablesByRestaurant(@RequestBody GetTablesByRestaurantDTO getTablesDTO) {
         List<TableDTO> tables = tableService.getTablesByRestaurant(getTablesDTO.getRestaurantId());
         return ResponseEntity.ok(tables);
@@ -35,7 +35,7 @@ public class TableController {
         return ResponseEntity.ok(updatedTable);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("delete")
     public ResponseEntity<Void> deleteTable(@RequestBody DeleteTableDTO dto) throws AccessDeniedException {
         tableService.deleteTable(dto.getTableId(), dto.getRestaurantId());
         return ResponseEntity.noContent().build();
