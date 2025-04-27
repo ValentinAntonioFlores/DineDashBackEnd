@@ -79,8 +79,10 @@ public class ClientUserService {
     }
 
     // ✔ Actualizar usuario (Modificación)
-    public ClientUserDTO updateClient(UUID id, UpdateClientUserDTO updatedUserDTO) {
-        ClientUser user = clientUserRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    public ClientUserDTO updateClient(String email, UpdateClientUserDTO updatedUserDTO) {
+        ClientUser user = clientUserRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
         user.setNombre(updatedUserDTO.getNombre());
         user.setApellido(updatedUserDTO.getApellido());
         user.setContraseña(updatedUserDTO.getContraseña()); // Contraseña sin encriptar
@@ -93,6 +95,7 @@ public class ClientUserService {
                 updatedUser.getEmail()
         );
     }
+
 
     // ✔ Eliminar usuario (Baja)
     public ClientUserResponseDTO deleteClient(UUID id) {

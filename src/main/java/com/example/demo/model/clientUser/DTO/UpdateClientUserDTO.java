@@ -12,14 +12,18 @@ public class UpdateClientUserDTO {
     @JsonProperty("lastname")
     private String apellido;
 
+    @JsonProperty("email")
+    private String email;
+
     @JsonProperty("password")
     private String contraseña; // Opcional, solo se actualiza si se proporciona
 
     public UpdateClientUserDTO() {}
 
-    public UpdateClientUserDTO(String nombre, String apellido, String contraseña) {
+    public UpdateClientUserDTO(String nombre, String apellido, String email, String contraseña) {
         this.nombre = nombre;
         this.apellido = apellido;
+        this.email = email;
         this.contraseña = contraseña;
     }
 
@@ -28,6 +32,9 @@ public class UpdateClientUserDTO {
 
     public String getApellido() { return apellido; }
     public void setApellido(String apellido) { this.apellido = apellido; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }

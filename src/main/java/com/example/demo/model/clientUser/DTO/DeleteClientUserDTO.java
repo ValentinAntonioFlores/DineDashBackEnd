@@ -1,9 +1,12 @@
 package com.example.demo.model.clientUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class DeleteClientUserDTO {
 
+    @JsonProperty("id")
     private UUID idUsuario;
 
     public DeleteClientUserDTO() {}

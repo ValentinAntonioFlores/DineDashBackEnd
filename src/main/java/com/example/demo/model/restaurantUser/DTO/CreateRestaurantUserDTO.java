@@ -1,8 +1,16 @@
 package com.example.demo.model.restaurantUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class CreateRestaurantUserDTO {
+
+    @JsonProperty("restaurantName")
     private String nombreRestaurante;
+
+    @JsonProperty("email")
     private String email;
+
+    @JsonProperty("password")
     private String contraseña;
 
     public CreateRestaurantUserDTO() {}

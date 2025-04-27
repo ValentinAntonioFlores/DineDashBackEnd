@@ -1,10 +1,14 @@
 package com.example.demo.model.clientUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class ClientUserResponseDTO {
 
     private String message;
+
+    @JsonProperty("id")
     private UUID idUsuario;
 
     public ClientUserResponseDTO() {}

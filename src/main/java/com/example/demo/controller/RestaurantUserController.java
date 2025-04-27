@@ -27,6 +27,7 @@ public class RestaurantUserController {
 
     @PostMapping("register")
     public ResponseEntity<String> registerRestaurantUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
+        System.out.println("Received data: " + createRestaurantUserDTO.getNombreRestaurante() + ", " + createRestaurantUserDTO.getEmail());
         try {
             restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
             return ResponseEntity.ok("Restaurant user registered successfully: " + createRestaurantUserDTO.getNombreRestaurante());
@@ -34,6 +35,7 @@ public class RestaurantUserController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+
 
     @GetMapping("{id}")
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {

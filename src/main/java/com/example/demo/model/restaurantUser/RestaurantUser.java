@@ -1,5 +1,6 @@
 package com.example.demo.model.restaurantUser;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.UUID;
 
@@ -9,8 +10,10 @@ public class RestaurantUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+
     private UUID idRestaurante; // PK
 
+    @JsonProperty("restaurantName")
     private String nombreRestaurante;
 
     @Column(unique = true, nullable = false)

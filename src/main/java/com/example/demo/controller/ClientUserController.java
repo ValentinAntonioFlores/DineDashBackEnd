@@ -85,7 +85,7 @@ public class ClientUserController {
     // ✔ Actualizar usuario (Modificación)
     @PutMapping("{id}")
     public ResponseEntity<ClientUserDTO> updateUser(@PathVariable UUID id, @RequestBody UpdateClientUserDTO updatedUserDTO) {
-        return ResponseEntity.ok(clientUserService.updateClient(id, updatedUserDTO));
+        return ResponseEntity.ok(clientUserService.updateClient(String.valueOf(id), updatedUserDTO));
     }
 
     // ✔ Eliminar usuario (Baja)
@@ -103,11 +103,18 @@ public class ClientUserController {
             ClientUserDTO loggedUser = user.get();
             String token = jwtUtility.generateToken(loggedUser.getEmail());
 
+            System.out.println(token);
+            System.out.println(loginDTO.getEmail());
+            System.out.println(loggedUser.getIdUsuario());
+            System.out.println(loggedUser.getNombre());
+            System.out.println(loggedUser.getApellido());
+
             LoginResponseDTO response = new LoginResponseDTO(
                     token,
                     loggedUser.getNombre(),
                     loggedUser.getApellido(),
-                    loggedUser.getEmail()
+                    loggedUser.getEmail(),
+                    loggedUser.getIdUsuario()
             );
 
             return ResponseEntity.ok(response);

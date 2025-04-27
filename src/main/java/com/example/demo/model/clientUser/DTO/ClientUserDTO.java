@@ -6,6 +6,7 @@ import java.util.UUID;
 
 public class ClientUserDTO {
 
+    @JsonProperty("id")
     private UUID idUsuario;
 
     @JsonProperty("firstName")
