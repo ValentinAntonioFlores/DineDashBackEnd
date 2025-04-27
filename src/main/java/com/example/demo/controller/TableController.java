@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.table.DTO.TableDTO;
+import com.example.demo.model.table.DTO.*;
 import com.example.demo.services.TableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/tables")
@@ -18,30 +17,27 @@ public class TableController {
     @Autowired
     private TableService tableService;
 
-    @GetMapping("{restaurantId}")
-    public ResponseEntity<List<TableDTO>> getTablesByRestaurant(@PathVariable UUID restaurantId) {
-        List<TableDTO> tables = tableService.getTablesByRestaurant(restaurantId);
+    @PostMapping("/by-restaurant")
+    public ResponseEntity<List<TableDTO>> getTablesByRestaurant(@RequestBody GetTablesByRestaurantDTO getTablesDTO) {
+        List<TableDTO> tables = tableService.getTablesByRestaurant(getTablesDTO.getRestaurantId());
         return ResponseEntity.ok(tables);
     }
 
     @PostMapping
-    public ResponseEntity<TableDTO> createTable(@RequestParam UUID restaurantId, @RequestBody TableDTO tableDTO) {
-        TableDTO createdTable = tableService.createTable(restaurantId, tableDTO);
+    public ResponseEntity<TableDTO> createTable(@RequestBody CreateTableDTO dto) {
+        TableDTO createdTable = tableService.createTable(dto.getRestaurantId(), dto.getTableDTO());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTable);
     }
 
-    @PutMapping("{tableId}")
-    public ResponseEntity<TableDTO> updateTable(
-            @PathVariable UUID tableId,
-            @RequestBody TableDTO tableDTO,
-            @RequestParam UUID restaurantId) throws AccessDeniedException {
-        TableDTO updatedTable = tableService.updateTable(tableId, tableDTO, restaurantId);
+    @PutMapping
+    public ResponseEntity<TableDTO> updateTable(@RequestBody UpdateTableDTO dto) throws AccessDeniedException {
+        TableDTO updatedTable = tableService.updateTable(dto.getTableId(), dto.getTableDTO(), dto.getRestaurantId());
         return ResponseEntity.ok(updatedTable);
     }
 
-    @DeleteMapping("{tableId}")
-    public ResponseEntity<Void> deleteTable(@PathVariable UUID tableId, @RequestParam UUID restaurantId) throws AccessDeniedException {
-        tableService.deleteTable(tableId, restaurantId);
+    @PostMapping("/delete")
+    public ResponseEntity<Void> deleteTable(@RequestBody DeleteTableDTO dto) throws AccessDeniedException {
+        tableService.deleteTable(dto.getTableId(), dto.getRestaurantId());
         return ResponseEntity.noContent().build();
     }
 }

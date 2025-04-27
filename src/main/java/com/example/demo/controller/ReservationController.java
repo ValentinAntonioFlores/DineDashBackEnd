@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.reservation.DTO.*;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -11,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/reservations")
@@ -26,55 +25,55 @@ public class ReservationController {
     @Autowired
     private RestaurantUserService restaurantUserService;
 
-    @GetMapping
+    @PostMapping("/all")
     public ResponseEntity<List<Reservation>> getAllReservations() {
         List<Reservation> reservations = reservationService.getAllReservations();
         return ResponseEntity.ok(reservations);
     }
 
-    @GetMapping("{reservationId}")
-    public ResponseEntity<Reservation> getReservationById(@PathVariable UUID reservationId) {
-        Reservation reservation = reservationService.getReservationById(reservationId);
+    @PostMapping("/by-id")
+    public ResponseEntity<Reservation> getReservationById(@RequestBody GetReservationByIdDTO dto) {
+        Reservation reservation = reservationService.getReservationById(dto.getReservationId());
         return ResponseEntity.ok(reservation);
     }
 
-    @GetMapping("table/{tableId}")
-    public ResponseEntity<List<Reservation>> getReservationsByTable(@PathVariable UUID tableId) {
-        RestaurantTable table = tableService.getTableById(tableId);
+    @PostMapping("/by-table")
+    public ResponseEntity<List<Reservation>> getReservationsByTable(@RequestBody GetReservationsByTableDTO dto) {
+        RestaurantTable table = tableService.getTableById(dto.getTableId());
         List<Reservation> reservations = reservationService.getReservationsByTable(table);
         return ResponseEntity.ok(reservations);
     }
 
-    @GetMapping("user/{userId}")
-    public ResponseEntity<List<Reservation>> getReservationsByUser(@PathVariable UUID userId) {
-        RestaurantUser user = restaurantUserService.getRestaurantUserById(userId);
+    @PostMapping("/by-user")
+    public ResponseEntity<List<Reservation>> getReservationsByUser(@RequestBody GetReservationsByUserDTO dto) {
+        RestaurantUser user = restaurantUserService.getRestaurantUserById(dto.getUserId());
         List<Reservation> reservations = reservationService.getReservationsByUser(user);
         return ResponseEntity.ok(reservations);
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(
-            @RequestParam UUID tableId,
-            @RequestParam UUID restaurantUserId,
-            @RequestParam LocalDateTime startTime,
-            @RequestParam LocalDateTime endTime) {
-        RestaurantTable table = tableService.getTableById(tableId);
-        RestaurantUser restaurantUser = restaurantUserService.getRestaurantUserById(restaurantUserId);
-        Reservation reservation = reservationService.createReservation(table, restaurantUser, startTime, endTime, ReservationStatus.PENDING);
+    public ResponseEntity<Reservation> createReservation(@RequestBody CreateReservationDTO reservationDTO) {
+        RestaurantTable table = tableService.getTableById(reservationDTO.getTableId());
+        RestaurantUser restaurantUser = restaurantUserService.getRestaurantUserById(reservationDTO.getRestaurantUserId());
+        Reservation reservation = reservationService.createReservation(
+                table,
+                restaurantUser,
+                reservationDTO.getStartTime(),
+                reservationDTO.getEndTime(),
+                ReservationStatus.PENDING
+        );
         return ResponseEntity.ok(reservation);
     }
 
-    @PatchMapping("{reservationId}/status")
-    public ResponseEntity<Reservation> updateReservationStatus(
-            @PathVariable UUID reservationId,
-            @RequestBody ReservationStatus status) {
-        Reservation updatedReservation = reservationService.updateReservationStatus(reservationId, status);
+    @PostMapping("/update-status")
+    public ResponseEntity<Reservation> updateReservationStatus(@RequestBody UpdateReservationStatusDTO statusDTO) {
+        Reservation updatedReservation = reservationService.updateReservationStatus(statusDTO.getReservationId(), statusDTO.getStatus());
         return ResponseEntity.ok(updatedReservation);
     }
 
-    @DeleteMapping("{reservationId}")
-    public ResponseEntity<String> deleteReservation(@PathVariable UUID reservationId) {
-        reservationService.cancelReservation(reservationId);
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteReservation(@RequestBody DeleteReservationDTO dto) {
+        reservationService.cancelReservation(dto.getReservationId());
         return ResponseEntity.ok("Reservation canceled successfully.");
     }
 }
