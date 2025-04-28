@@ -66,9 +66,10 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
-    public List<Reservation> getReservationsByUser(RestaurantUser user) {
-        return reservationRepository.findByUser(user);
+    public List<Reservation> getReservationsByUser(RestaurantUser restaurantUser) {
+        return reservationRepository.findByRestaurantUser(restaurantUser); // Update 'user' to 'restaurantUser' here
     }
+
 
     public List<Reservation> getReservationsByTable(RestaurantTable table) {
         return reservationRepository.findByTable(table);

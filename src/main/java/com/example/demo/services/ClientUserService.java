@@ -42,13 +42,15 @@ public class ClientUserService {
 
     // ✔ Obtener usuario por ID
     public Optional<ClientUserDTO> getClientById(UUID id) {
-        return clientUserRepository.findById(id).map(user -> new ClientUserDTO(
-                user.getIdUsuario(),
-                user.getNombre(),
-                user.getApellido(),
-                user.getEmail()
+        Optional<ClientUser> user = clientUserRepository.findById(id); // Find user by ID
+        return user.map(clientUser -> new ClientUserDTO(
+                clientUser.getIdUsuario(),
+                clientUser.getNombre(),
+                clientUser.getApellido(),
+                clientUser.getEmail()
         ));
     }
+
 
     // ✔ Obtener usuario por email
     public Optional<ClientUserDTO> getClientByEmail(String email) {
@@ -78,9 +80,8 @@ public class ClientUserService {
         )).collect(Collectors.toList());
     }
 
-    // ✔ Actualizar usuario (Modificación)
-    public ClientUserDTO updateClient(String email, UpdateClientUserDTO updatedUserDTO) {
-        ClientUser user = clientUserRepository.findByEmail(email)
+    public ClientUserDTO updateClient(UUID id, UpdateClientUserDTO updatedUserDTO) {
+        ClientUser user = clientUserRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         user.setNombre(updatedUserDTO.getNombre());
@@ -95,6 +96,7 @@ public class ClientUserService {
                 updatedUser.getEmail()
         );
     }
+
 
 
     // ✔ Eliminar usuario (Baja)

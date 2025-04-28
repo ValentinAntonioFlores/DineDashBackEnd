@@ -43,39 +43,46 @@ public class Reservation {
     public void setId(UUID id) {
         this.id = id;
     }
+
     public RestaurantTable getTable() {
         return table;
     }
     public void setTable(RestaurantTable table) {
         this.table = table;
     }
+
     public RestaurantUser getRestaurantUser() {
         return restaurantUser;
     }
     public void setRestaurantUser(RestaurantUser restaurantUser) {
         this.restaurantUser = restaurantUser;
     }
+
     public LocalDateTime getStartTime() {
         return startTime;
     }
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
+
     public LocalDateTime getEndTime() {
         return endTime;
     }
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
     public ReservationStatus getStatus() {
         return status;
     }
     public void setStatus(ReservationStatus status) {
         this.status = status;
     }
+
     public int getCapacity() {
         return table.getCapacity();
     }
+
     public int getPositionX() {
         return table.getPositionX();
     }
@@ -85,15 +92,18 @@ public class Reservation {
     public UUID getTableId() {
         return table.getId();
     }
+
     public RestaurantUser getRestaurant() {
         return table.getRestaurant();
     }
     public void setRestaurant(RestaurantUser restaurant) {
         table.setRestaurant(restaurant);
     }
+
     public void setCapacity(int capacity) {
         table.setCapacity(capacity);
     }
+
     public void setPositionX(int positionX) {
         table.setPositionX(positionX);
     }

@@ -61,6 +61,7 @@ public class ClientUserController {
         return user.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
+
     // ✔ Endpoint to get user by email
     @GetMapping("/clientUsers/{email}")
     public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
@@ -82,10 +83,10 @@ public class ClientUserController {
         return ResponseEntity.ok(clientUserService.getAllClients());
     }
 
-    // ✔ Actualizar usuario (Modificación)
+    //Modificacion
     @PutMapping("{id}")
     public ResponseEntity<ClientUserDTO> updateUser(@PathVariable UUID id, @RequestBody UpdateClientUserDTO updatedUserDTO) {
-        return ResponseEntity.ok(clientUserService.updateClient(String.valueOf(id), updatedUserDTO));
+        return ResponseEntity.ok(clientUserService.updateClient(id, updatedUserDTO));
     }
 
     // ✔ Eliminar usuario (Baja)

@@ -16,5 +16,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
 
     List<Reservation> findByTable(RestaurantTable table);
 
-    List<Reservation> findByUser(RestaurantUser user);
+    List<Reservation> findByRestaurantUser(RestaurantUser restaurantUser); // Ensure method name matches the field name
 }
+
