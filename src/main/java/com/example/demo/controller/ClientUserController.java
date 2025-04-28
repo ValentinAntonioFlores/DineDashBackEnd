@@ -30,7 +30,7 @@ public class ClientUserController {
     private TokenBlackListService tokenBlackListService;
 
 
-    @PostMapping("/register")
+    @PostMapping("register")
     public ResponseEntity<Map<String, String>> registerUser(@RequestBody @Valid CreateClientUserDTO createClientUserDTO, BindingResult bindingResult) {
         // If there are validation errors, return a bad request response with the error messages
         if (bindingResult.hasErrors()) {
@@ -63,7 +63,7 @@ public class ClientUserController {
 
 
     // ✔ Endpoint to get user by email
-    @GetMapping("/clientUsers/{email}")
+    @GetMapping("clientUsers/{email}")
     public ResponseEntity<String> getUserByEmail(@PathVariable String email) {
         Optional<ClientUserDTO> userDTO = clientUserService.getClientByEmail(email);
 
@@ -123,8 +123,6 @@ public class ClientUserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
-
 
     // ✔ Cerrar sesión
     @PostMapping("logout")
