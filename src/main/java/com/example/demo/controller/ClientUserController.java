@@ -72,7 +72,7 @@ public class ClientUserController {
             return ResponseEntity.ok(userDTO.get().getNombre());
         } else {
             System.out.println("User not found with email: " + email);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
         }
     }
 
