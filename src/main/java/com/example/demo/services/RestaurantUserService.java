@@ -84,7 +84,8 @@ public class RestaurantUserService {
 
     public Optional<LoginRestaurantUserDTO> loginRestaurantUser(String email, String password) {
         // Check if the email exists in the ClientUser table
-        if (clientUserRepository.findByEmail(email).isPresent()) {
+        boolean emailExistsInClientUser = clientUserRepository.findByEmail(email).isPresent();
+        if (emailExistsInClientUser) {
             throw new RuntimeException("El email pertenece a un ClientUser, no a un RestaurantUser.");
         }
 
