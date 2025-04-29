@@ -2,6 +2,7 @@ package com.example.demo.services;
 
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.RestaurantUser;
+import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,13 @@ public class RestaurantUserService {
     @Autowired
     private RestaurantUserRepository restaurantUserRepository;
 
+    @Autowired
+    private ClientUserRepository clientUserRepository; // Inject ClientUserRepository
+
     public RestaurantUserResponseDTO registerRestaurantUser(CreateRestaurantUserDTO restaurantUserDTO) {
         Optional<RestaurantUser> existingUser = restaurantUserRepository.findByEmail(restaurantUserDTO.getEmail());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Email ya registrado.");
+            throw new EmailAlreadyRegisteredException("El email ya está registrado: " + restaurantUserDTO.getEmail());
         }
 
         RestaurantUser newUser = new RestaurantUser(
@@ -34,6 +38,12 @@ public class RestaurantUserService {
                 savedUser.getNombreRestaurante(),
                 savedUser.getEmail()
         );
+    }
+
+    public static class EmailAlreadyRegisteredException extends RuntimeException {
+        public EmailAlreadyRegisteredException(String message) {
+            super(message);
+        }
     }
 
     public RestaurantUser getRestaurantUserById(UUID id) {
@@ -72,16 +82,20 @@ public class RestaurantUserService {
     }
 
     public Optional<LoginRestaurantUserDTO> loginRestaurantUser(String email, String password) {
+        // Check if the email exists in the ClientUser table
+        if (clientUserRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("El email pertenece a un ClientUser, no a un RestaurantUser.");
+        }
+
+        // Proceed with RestaurantUser login
         Optional<RestaurantUser> user = restaurantUserRepository.findByEmail(email);
         if (user.isPresent() && password.equals(user.get().getContraseña())) {
             RestaurantUser loggedInUser = user.get();
             return Optional.of(new LoginRestaurantUserDTO(
                     loggedInUser.getNombreRestaurante(),
                     loggedInUser.getEmail()
-
             ));
         }
         return Optional.empty();
     }
-
 }

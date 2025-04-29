@@ -3,6 +3,7 @@ package com.example.demo.services;
 import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.repository.ClientUserRepository;
+import com.example.demo.repository.RestaurantUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,12 +17,15 @@ public class ClientUserService {
 
     @Autowired
     private ClientUserRepository clientUserRepository;
+    @Autowired
+    private RestaurantUserRepository restaurantUserRepository; // Inject RestaurantUserRepository
 
     // ✔ Crear un usuario (Alta)
     public ClientUserDTO registerClient(CreateClientUserDTO clientUserDTO) {
-        Optional<ClientUser> existingUser = clientUserRepository.findByEmail(clientUserDTO.getEmail());
-        if (existingUser.isPresent()) {
-            throw new RuntimeException("El email ya está registrado.");
+        // Check if the email exists in ClientUser or RestaurantUser
+        if (clientUserRepository.findByEmail(clientUserDTO.getEmail()).isPresent() ||
+                restaurantUserRepository.findByEmail(clientUserDTO.getEmail()).isPresent()) {
+            throw new EmailAlreadyRegisteredException("El email ya está registrado: " + clientUserDTO.getEmail());
         }
 
         ClientUser newUser = new ClientUser(
@@ -118,9 +122,14 @@ public class ClientUserService {
         clientUserRepository.delete(user);
         return new ClientUserResponseDTO("Usuario eliminado exitosamente", user.getIdUsuario());
     }
-
     // ✔ Iniciar sesión
     public Optional<ClientUserDTO> loginClient(String email, String password) {
+        // Check if the email exists in the RestaurantUser table
+        if (restaurantUserRepository.findByEmail(email).isPresent()) {
+            throw new RuntimeException("El email pertenece a un RestaurantUser, no a un ClientUser.");
+        }
+
+        // Proceed with ClientUser login
         Optional<ClientUser> optionalUser = clientUserRepository.findByEmail(email);
 
         if (optionalUser.isEmpty()) return Optional.empty();
@@ -138,6 +147,13 @@ public class ClientUserService {
         );
 
         return Optional.of(dto);
+    }
+
+    // Custom exception for email already registered
+    public static class EmailAlreadyRegisteredException extends RuntimeException {
+        public EmailAlreadyRegisteredException(String message) {
+            super(message);
+        }
     }
 
 }
