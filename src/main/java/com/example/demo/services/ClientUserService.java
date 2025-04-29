@@ -22,7 +22,7 @@ public class ClientUserService {
 
     // ✔ Crear un usuario (Alta)
     public ClientUserDTO registerClient(CreateClientUserDTO clientUserDTO) {
-        // Check if the email exists in ClientUser or RestaurantUser
+        // Check if the email exists in either ClientUser or RestaurantUser
         if (clientUserRepository.findByEmail(clientUserDTO.getEmail()).isPresent() ||
                 restaurantUserRepository.findByEmail(clientUserDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyRegisteredException("El email ya está registrado: " + clientUserDTO.getEmail());
@@ -32,7 +32,7 @@ public class ClientUserService {
                 clientUserDTO.getNombre(),
                 clientUserDTO.getApellido(),
                 clientUserDTO.getEmail(),
-                clientUserDTO.getContraseña() // Contraseña sin encriptar
+                clientUserDTO.getContraseña()
         );
 
         ClientUser savedUser = clientUserRepository.save(newUser);
