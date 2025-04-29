@@ -1,5 +1,8 @@
 package com.example.demo.services;
 
+import com.example.demo.model.clientUser.ClientUser;
+import com.example.demo.model.clientUser.DTO.ClientUserDTO;
+import com.example.demo.model.clientUser.DTO.CreateClientUserDTO;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.repository.ClientUserRepository;
@@ -20,25 +23,33 @@ public class RestaurantUserService {
     @Autowired
     private ClientUserRepository clientUserRepository; // Inject ClientUserRepository
 
-    public RestaurantUserResponseDTO registerRestaurantUser(CreateRestaurantUserDTO restaurantUserDTO) {
-        Optional<RestaurantUser> existingUser = restaurantUserRepository.findByEmail(restaurantUserDTO.getEmail());
-        if (existingUser.isPresent()) {
+    // RestaurantUserService.java
+
+    public RestaurantUserDTO registerRestaurant(CreateRestaurantUserDTO restaurantUserDTO) {
+        // Check if the email exists in ClientUser or RestaurantUser
+        Optional<ClientUser> clientUserOptional = clientUserRepository.findByEmail(restaurantUserDTO.getEmail());
+        Optional<RestaurantUser> restaurantUserOptional = restaurantUserRepository.findByEmail(restaurantUserDTO.getEmail());
+
+        if (clientUserOptional.isPresent() || restaurantUserOptional.isPresent()) {
+            // If the email is found in either repository, throw an exception
             throw new EmailAlreadyRegisteredException("El email ya está registrado: " + restaurantUserDTO.getEmail());
         }
 
-        RestaurantUser newUser = new RestaurantUser(
+        // Create new RestaurantUser
+        RestaurantUser newRestaurantUser = new RestaurantUser(
                 restaurantUserDTO.getNombreRestaurante(),
                 restaurantUserDTO.getEmail(),
-                restaurantUserDTO.getContraseña()
+                restaurantUserDTO.getContraseña() // Contraseña sin encriptar
         );
 
-        RestaurantUser savedUser = restaurantUserRepository.save(newUser);
-        return new RestaurantUserResponseDTO(
-                savedUser.getIdRestaurante(),
-                savedUser.getNombreRestaurante(),
-                savedUser.getEmail()
+        RestaurantUser savedRestaurantUser = restaurantUserRepository.save(newRestaurantUser);
+        return new RestaurantUserDTO(
+                savedRestaurantUser.getIdRestaurante(),
+                savedRestaurantUser.getNombreRestaurante(),
+                savedRestaurantUser.getEmail()
         );
     }
+
 
     public static class EmailAlreadyRegisteredException extends RuntimeException {
         public EmailAlreadyRegisteredException(String message) {
@@ -81,21 +92,30 @@ public class RestaurantUserService {
         restaurantUserRepository.deleteById(id);
     }
 
-    public Optional<LoginRestaurantUserDTO> loginRestaurantUser(String email, String password) {
+    // RestaurantUserService.java
+    public Optional<RestaurantUserDTO> loginRestaurant(String email, String password) {
         // Check if the email exists in the ClientUser table
         if (clientUserRepository.findByEmail(email).isPresent()) {
             throw new RuntimeException("El email pertenece a un ClientUser, no a un RestaurantUser.");
         }
 
         // Proceed with RestaurantUser login
-        Optional<RestaurantUser> user = restaurantUserRepository.findByEmail(email);
-        if (user.isPresent() && password.equals(user.get().getContraseña())) {
-            RestaurantUser loggedInUser = user.get();
-            return Optional.of(new LoginRestaurantUserDTO(
-                    loggedInUser.getNombreRestaurante(),
-                    loggedInUser.getEmail()
-            ));
-        }
-        return Optional.empty();
+        Optional<RestaurantUser> optionalUser = restaurantUserRepository.findByEmail(email);
+
+        if (optionalUser.isEmpty()) return Optional.empty();
+
+        RestaurantUser user = optionalUser.get();
+
+        if (!user.getContraseña().equals(password)) return Optional.empty();
+
+        // Convert user to DTO (excluding password)
+        RestaurantUserDTO dto = new RestaurantUserDTO(
+                user.getIdRestaurante(),
+                user.getNombreRestaurante(),
+                user.getEmail()
+        );
+
+        return Optional.of(dto);
     }
 }
+

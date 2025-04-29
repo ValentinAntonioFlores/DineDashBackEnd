@@ -47,6 +47,11 @@ public class ClientUserService {
     // ✔ Obtener usuario por ID
     public Optional<ClientUserDTO> getClientById(UUID id) {
         Optional<ClientUser> user = clientUserRepository.findById(id); // Find user by ID
+
+        System.out.println("Nombre:" + user.get().getNombre());
+        System.out.println("Apellido:" + user.get().getApellido());
+        System.out.println("Email:" + user.get().getEmail());
+        System.out.println("Id:" + id);
         return user.map(clientUser -> new ClientUserDTO(
                 clientUser.getIdUsuario(),
                 clientUser.getNombre(),

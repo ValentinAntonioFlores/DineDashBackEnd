@@ -115,9 +115,9 @@ public class ClientUserController {
                     loggedUser.getNombre(),
                     loggedUser.getApellido(),
                     loggedUser.getEmail(),
-                    loggedUser.getIdUsuario()
+                    loggedUser.getIdUsuario(),
+                    "client" // <-- userType added
             );
-
             return ResponseEntity.ok(response);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

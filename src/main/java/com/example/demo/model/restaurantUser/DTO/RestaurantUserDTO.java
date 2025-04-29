@@ -1,11 +1,17 @@
 package com.example.demo.model.restaurantUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class RestaurantUserDTO {
 
     private UUID idRestaurante;
+
+    @JsonProperty("restaurantName")
     private String nombreRestaurante;
+
+    @JsonProperty("email")
     private String email;
 
     public RestaurantUserDTO(String nombreRestaurante, String email) {}

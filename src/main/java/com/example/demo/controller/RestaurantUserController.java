@@ -3,15 +3,18 @@ package com.example.demo.controller;
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.restaurantUser.DTO.*;
+import com.example.demo.model.restaurantUser.DTO.RestaurantLoginResponseDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.services.RestaurantUserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+
+import java.util.*;
 
 @RestController
 @RequestMapping("/restaurantUsers")
@@ -25,25 +28,40 @@ public class RestaurantUserController {
     @Autowired
     private TokenBlackListService tokenBlackListService;
 
+    // RestaurantUserController.java
+
     @PostMapping("register")
-    public ResponseEntity<String> registerRestaurantUser(@RequestBody CreateRestaurantUserDTO createRestaurantUserDTO) {
-        System.out.println("Received data: " + createRestaurantUserDTO.getNombreRestaurante() + ", " + createRestaurantUserDTO.getEmail());
+    public ResponseEntity<Map<String, String>> registerRestaurantUser(@RequestBody @Valid CreateRestaurantUserDTO createRestaurantUserDTO, BindingResult bindingResult) {
+        // If there are validation errors, return a bad request response with the error messages
+        if (bindingResult.hasErrors()) {
+            StringBuilder errors = new StringBuilder();
+            bindingResult.getAllErrors().forEach(error -> errors.append(error.getDefaultMessage()).append(" "));
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Validation failed: " + errors.toString());
+            return ResponseEntity.badRequest().body(errorResponse);
+        }
+
         try {
-            restaurantUserService.registerRestaurantUser(createRestaurantUserDTO);
-            return ResponseEntity.ok("Restaurant user registered successfully: " + createRestaurantUserDTO.getNombreRestaurante());
+            restaurantUserService.registerRestaurant(createRestaurantUserDTO);
+            Map<String, String> successResponse = new HashMap<>();
+            successResponse.put("message", "Restaurant registered successfully.");
+            return ResponseEntity.ok(successResponse);
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
 
 
+
     @GetMapping("{id}")
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {
-        RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
-        if (user.isPresent()) {
+        try {
+            RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
             RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail());
             return ResponseEntity.ok(userDTO);
-        } else {
+        } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -79,16 +97,33 @@ public class RestaurantUserController {
         }
     }
 
+    // RestaurantUserController.java
     @PostMapping("login")
-    public ResponseEntity<String> loginRestaurantUser(@RequestBody LoginRestaurantUserDTO loginRequest) {
-        Optional<LoginRestaurantUserDTO> user = restaurantUserService.loginRestaurantUser(loginRequest.getEmail(), loginRequest.getContraseña());
+    public ResponseEntity<RestaurantLoginResponseDTO> loginRestaurant(@RequestBody LoginRestaurantUserDTO loginDTO) {
+        Optional<RestaurantUserDTO> user = restaurantUserService.loginRestaurant(loginDTO.getEmail(), loginDTO.getPassword());
+
         if (user.isPresent()) {
-            String token = jwtUtility.generateToken(loginRequest.getEmail());
-            return ResponseEntity.ok("Login successful. Token: " + token);
+            RestaurantUserDTO loggedInUser = user.get();
+            String token = jwtUtility.generateToken(loggedInUser.getEmail());
+
+            System.out.println(token);
+            System.out.println(loginDTO.getEmail());
+            System.out.println(loggedInUser.getIdRestaurante());
+            System.out.println(loggedInUser.getNombreRestaurante());
+
+            RestaurantLoginResponseDTO response = new RestaurantLoginResponseDTO(
+                    token,
+                    loggedInUser.getNombreRestaurante(),
+                    loggedInUser.getEmail(),
+                    loggedInUser.getIdRestaurante(),
+                    "restaurant" // <-- userType added
+            );
+            return ResponseEntity.ok(response);
         } else {
-            return ResponseEntity.status(401).body("Invalid email or password");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
 
     @PostMapping("logout")
     public ResponseEntity<String> logout(@RequestHeader("Authorization") String token) {

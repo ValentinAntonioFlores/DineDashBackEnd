@@ -9,13 +9,18 @@ public class LoginResponseDTO {
     private String lastName;
     private String email;
     private UUID idUsuario;
+    private String userType; // <-- Add this
 
-    public LoginResponseDTO(String token, String firstName, String lastName, String email, UUID idUsuario) {
+
+    public LoginResponseDTO(String token, String firstName, String lastName, String email, UUID idUsuario, String userType) {
         this.token = token;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.idUsuario = idUsuario;
+        this.userType = userType;
+
+
     }
 
     // Getters and setters (or use Lombok with @Data if you prefer)
@@ -24,4 +29,5 @@ public class LoginResponseDTO {
     public String getLastName() { return lastName; }
     public String getEmail() { return email; }
     public UUID getIdUsuario() { return idUsuario; }
+    public String getUserType() { return userType; }
 }

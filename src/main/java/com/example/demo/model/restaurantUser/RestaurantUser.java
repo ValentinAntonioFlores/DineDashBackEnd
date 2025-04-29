@@ -19,6 +19,7 @@ public class RestaurantUser {
     @Column(unique = true, nullable = false)
     private String email;
 
+    @JsonProperty("password")
     private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
 
     public RestaurantUser() {}
