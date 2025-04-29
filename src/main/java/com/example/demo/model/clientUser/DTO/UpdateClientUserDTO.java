@@ -6,18 +6,19 @@ import org.antlr.v4.runtime.misc.NotNull;
 
 public class UpdateClientUserDTO {
 
-    @JsonProperty("firstname")
+    @JsonProperty("firstName")
     private String nombre;
 
-    @JsonProperty("lastname")
+    @JsonProperty("lastName")
     private String apellido;
 
     @JsonProperty("email")
     private String email;
 
     @JsonProperty("password")
-    private String contraseña; // Opcional, solo se actualiza si se proporciona
+    private String contraseña; // Optional, only updated if provided
 
+    // Constructor
     public UpdateClientUserDTO() {}
 
     public UpdateClientUserDTO(String nombre, String apellido, String email, String contraseña) {
@@ -27,6 +28,7 @@ public class UpdateClientUserDTO {
         this.contraseña = contraseña;
     }
 
+    // Getters and Setters
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
@@ -38,5 +40,4 @@ public class UpdateClientUserDTO {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
-
 }

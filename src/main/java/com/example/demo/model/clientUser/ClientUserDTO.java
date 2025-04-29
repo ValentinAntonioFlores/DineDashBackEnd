@@ -9,10 +9,10 @@ public class ClientUserDTO {
     @JsonProperty("id")
     private UUID idUsuario;
 
-    @JsonProperty("firstname")
+    @JsonProperty("firstName")
     private String nombre;
 
-    @JsonProperty("lastname")
+    @JsonProperty("lastName")
     private String apellido;
 
     @JsonProperty("email")

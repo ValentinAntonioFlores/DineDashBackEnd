@@ -80,15 +80,30 @@ public class ClientUserService {
         )).collect(Collectors.toList());
     }
 
+    // Modificar usuario
     public ClientUserDTO updateClient(UUID id, UpdateClientUserDTO updatedUserDTO) {
         ClientUser user = clientUserRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        // Log the values coming from the updatedUserDTO
+        System.out.println("Updating user with firstName: " + updatedUserDTO.getNombre());
+        System.out.println("Updating user with lastName: " + updatedUserDTO.getApellido());
+
         user.setNombre(updatedUserDTO.getNombre());
         user.setApellido(updatedUserDTO.getApellido());
-        user.setContraseña(updatedUserDTO.getContraseña()); // Contraseña sin encriptar
+        user.setEmail(updatedUserDTO.getEmail());
+
+        if (updatedUserDTO.getContraseña() != null && !updatedUserDTO.getContraseña().isEmpty()) {
+            user.setContraseña(updatedUserDTO.getContraseña());
+        }
+
+        // Log the updated user details before saving
+        System.out.println("Updated user -> Nombre: " + user.getNombre());
+        System.out.println("Updated user -> Apellido: " + user.getApellido());
 
         ClientUser updatedUser = clientUserRepository.save(user);
+//Falta que cambie el mail y que si no quiero cambiar la contraseña no la cambie.
+        // Return the updated DTO
         return new ClientUserDTO(
                 updatedUser.getIdUsuario(),
                 updatedUser.getNombre(),
@@ -96,8 +111,6 @@ public class ClientUserService {
                 updatedUser.getEmail()
         );
     }
-
-
 
     // ✔ Eliminar usuario (Baja)
     public ClientUserResponseDTO deleteClient(UUID id) {
