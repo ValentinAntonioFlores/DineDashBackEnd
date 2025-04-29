@@ -1,9 +1,13 @@
 package com.example.demo.model.table.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class UpdateTableDTO {
     private UUID tableId;
+
+    @JsonProperty("restaurantId")
     private UUID restaurantId;
     private TableDTO tableDTO;
 
