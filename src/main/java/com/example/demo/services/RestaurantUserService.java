@@ -21,8 +21,9 @@ public class RestaurantUserService {
     private ClientUserRepository clientUserRepository; // Inject ClientUserRepository
 
     public RestaurantUserResponseDTO registerRestaurantUser(CreateRestaurantUserDTO restaurantUserDTO) {
-        Optional<RestaurantUser> existingUser = restaurantUserRepository.findByEmail(restaurantUserDTO.getEmail());
-        if (existingUser.isPresent()) {
+        // Check if the email exists in either RestaurantUser or ClientUser
+        if (restaurantUserRepository.findByEmail(restaurantUserDTO.getEmail()).isPresent() ||
+                clientUserRepository.findByEmail(restaurantUserDTO.getEmail()).isPresent()) {
             throw new EmailAlreadyRegisteredException("El email ya está registrado: " + restaurantUserDTO.getEmail());
         }
 
