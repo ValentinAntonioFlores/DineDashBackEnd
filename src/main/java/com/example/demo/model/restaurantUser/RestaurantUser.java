@@ -1,7 +1,7 @@
 package com.example.demo.model.restaurantUser;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -21,7 +21,8 @@ public class RestaurantUser {
     @JsonProperty("password")
     private String contraseña;
 
-
+    @Lob // Indica que es un campo para almacenar datos grandes (como imágenes)
+    private byte[] imagen; // Columna para almacenar la imagen
 
     public RestaurantUser() {}
 
@@ -42,6 +43,9 @@ public class RestaurantUser {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+
+    public byte[] getImagen() { return imagen; }
+    public void setImagen(byte[] imagen) { this.imagen = imagen; }
 
     public boolean isPresent() {
         return idRestaurante != null;
