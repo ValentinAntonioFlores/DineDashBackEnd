@@ -8,7 +8,9 @@ import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.services.RestaurantUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.BindingResult;
@@ -52,7 +54,6 @@ public class RestaurantUserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
         }
     }
-
 
 
     @GetMapping("{id}")
@@ -131,4 +132,22 @@ public class RestaurantUserController {
         tokenBlackListService.addToBlacklist(jwtToken);
         return ResponseEntity.ok("Logout successful");
     }
+
+    @PostMapping("/{id}/image")
+    public ResponseEntity<String> uploadImage(@PathVariable UUID id, @RequestBody UpdateRestaurantImageDTO imageDTO) {
+        System.out.println(id);
+        byte[] imageBytes = Base64.getDecoder().decode(imageDTO.getImagenBase64());
+        restaurantUserService.uploadImage(id, imageBytes);
+        return ResponseEntity.ok("Image uploaded successfully.");
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getImage(@PathVariable UUID id) {
+        byte[] image = restaurantUserService.getImage(id);
+        if (image == null) return ResponseEntity.notFound().build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG); // adjust if needed
+        return new ResponseEntity<>(image, headers, HttpStatus.OK);
+    }
+
 }

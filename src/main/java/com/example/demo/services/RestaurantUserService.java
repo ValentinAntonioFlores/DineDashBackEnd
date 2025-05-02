@@ -117,5 +117,15 @@ public class RestaurantUserService {
 
         return Optional.of(dto);
     }
+
+    public void uploadImage(UUID userId, byte[] image) {
+        RestaurantUser user = getRestaurantUserById(userId);
+        user.setImagen(image);
+        restaurantUserRepository.save(user);
+    }
+
+    public byte[] getImage(UUID userId) {
+        return getRestaurantUserById(userId).getImagen();
+    }
 }
 

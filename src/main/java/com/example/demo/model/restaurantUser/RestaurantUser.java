@@ -22,6 +22,7 @@ public class RestaurantUser {
     private String contraseña;
 
     @Lob // Indica que es un campo para almacenar datos grandes (como imágenes)
+    @Column(name = "imagen", columnDefinition = "BYTEA")
     private byte[] imagen; // Columna para almacenar la imagen
 
     public RestaurantUser() {}
