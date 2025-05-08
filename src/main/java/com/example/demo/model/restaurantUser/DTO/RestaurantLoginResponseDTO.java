@@ -1,5 +1,7 @@
 package com.example.demo.model.restaurantUser.DTO;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.UUID;
 
 public class RestaurantLoginResponseDTO {
@@ -8,13 +10,16 @@ public class RestaurantLoginResponseDTO {
     private String restaurantName;
     private String email;
     private UUID idRestaurante;
+    @JsonProperty("imageBase64")
+    private String imagenBase64;
     private String userType;
 
-    public RestaurantLoginResponseDTO(String token, String restaurantName, String email, UUID idRestaurante, String userType) {
+    public RestaurantLoginResponseDTO(String token, String restaurantName, String email, UUID idRestaurante, String imagenBase64, String userType) {
         this.token = token;
         this.restaurantName = restaurantName;
         this.email = email;
         this.idRestaurante = idRestaurante;
+        this.imagenBase64 = imagenBase64;
         this.userType = userType;
     }
 
@@ -36,5 +41,9 @@ public class RestaurantLoginResponseDTO {
 
     public String getUserType() {
         return userType;
+    }
+
+    public String getImagen() {
+        return imagenBase64;
     }
 }

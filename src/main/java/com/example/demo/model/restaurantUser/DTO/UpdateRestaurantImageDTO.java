@@ -4,24 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public  class UpdateRestaurantImageDTO {
 
-
-
-    @JsonProperty("idRestaurante")
-    private String idRestaurante;
-
-    @JsonProperty("image")
+    @JsonProperty("imageBase64")
     private String imagenBase64;
 
-    public UpdateRestaurantImageDTO(String idRestaurante, String imagenBase64) {
-        this.idRestaurante = idRestaurante;
-        this.imagenBase64 = imagenBase64;
-    }
+    public UpdateRestaurantImageDTO() {}
 
-    public String getIdRestaurante() {
-        return idRestaurante;
-    }
-    public void setIdRestaurante(String restaurantId) {
-        this.idRestaurante = restaurantId;
+    public UpdateRestaurantImageDTO(String imagenBase64) {
+        this.imagenBase64 = imagenBase64;
     }
 
     public String getImagenBase64() {

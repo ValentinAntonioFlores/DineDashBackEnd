@@ -21,9 +21,8 @@ public class RestaurantUser {
     @JsonProperty("password")
     private String contraseña;
 
-    @Lob // Indica que es un campo para almacenar datos grandes (como imágenes)
-    @Column(name = "imagen", columnDefinition = "BYTEA")
-    private byte[] imagen; // Columna para almacenar la imagen
+    @Column(name = "imagen", columnDefinition = "TEXT")
+    private String imagen; // Columna para almacenar la imagen
 
     public RestaurantUser() {}
 
@@ -45,8 +44,8 @@ public class RestaurantUser {
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
 
-    public byte[] getImagen() { return imagen; }
-    public void setImagen(byte[] imagen) { this.imagen = imagen; }
+    public String getImagen() { return imagen; }
+    public void setImagen(String imagen) { this.imagen = imagen; }
 
     public boolean isPresent() {
         return idRestaurante != null;

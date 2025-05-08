@@ -60,7 +60,7 @@ public class RestaurantUserController {
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {
         try {
             RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
-            RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail());
+            RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail(), user.getImagen());
             return ResponseEntity.ok(userDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -117,7 +117,9 @@ public class RestaurantUserController {
                     loggedInUser.getNombreRestaurante(),
                     loggedInUser.getEmail(),
                     loggedInUser.getIdRestaurante(),
+                    loggedInUser.getImagen(),
                     "restaurant" // <-- userType added
+
             );
             return ResponseEntity.ok(response);
         } else {
@@ -136,18 +138,34 @@ public class RestaurantUserController {
     @PostMapping("/{id}/image")
     public ResponseEntity<String> uploadImage(@PathVariable UUID id, @RequestBody UpdateRestaurantImageDTO imageDTO) {
         System.out.println(id);
-        byte[] imageBytes = Base64.getDecoder().decode(imageDTO.getImagenBase64());
-        restaurantUserService.uploadImage(id, imageBytes);
+        System.out.println("Request received at /{id}/image");
+//        byte[] imageBytes = Base64.getDecoder().decode(imageDTO.getImagenBase64());
+        String image = imageDTO.getImagenBase64();
+        System.out.println(image);
+        restaurantUserService.uploadImage(id, image );
         return ResponseEntity.ok("Image uploaded successfully.");
     }
 
     @GetMapping("/{id}/image")
-    public ResponseEntity<byte[]> getImage(@PathVariable UUID id) {
-        byte[] image = restaurantUserService.getImage(id);
+    public ResponseEntity<String> getImage(@PathVariable UUID id) {
+        String image = restaurantUserService.getImage(id);
         if (image == null) return ResponseEntity.notFound().build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG); // adjust if needed
         return new ResponseEntity<>(image, headers, HttpStatus.OK);
     }
 
+    @GetMapping("/public/restaurants")
+    public List<PublicRestaurantDTO> getPublicRestaurants() {
+        List<RestaurantUser> restaurants = restaurantUserRepository.findAll();
+
+        return restaurants.stream()
+                .map(r -> new PublicRestaurantDTO(
+                        r.getId(),
+                        r.getRestaurantName(),
+                        r.getImageUrl(),     // or whatever field you store image in
+                        r.getLayout()        // optional: layout preview
+                ))
+                .collect(Collectors.toList());
+    }
 }

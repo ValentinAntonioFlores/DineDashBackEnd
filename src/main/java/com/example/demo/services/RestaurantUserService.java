@@ -46,7 +46,9 @@ public class RestaurantUserService {
         return new RestaurantUserDTO(
                 savedRestaurantUser.getIdRestaurante(),
                 savedRestaurantUser.getNombreRestaurante(),
-                savedRestaurantUser.getEmail()
+                savedRestaurantUser.getEmail(),
+                savedRestaurantUser.getImagen()
+
         );
     }
 
@@ -67,7 +69,8 @@ public class RestaurantUserService {
                 .map(user -> new RestaurantUserDTO(
                         user.getIdRestaurante(),
                         user.getNombreRestaurante(),
-                        user.getEmail()
+                        user.getEmail(),
+                        user.getImagen()
                 ))
                 .toList();
     }
@@ -112,19 +115,20 @@ public class RestaurantUserService {
         RestaurantUserDTO dto = new RestaurantUserDTO(
                 user.getIdRestaurante(),
                 user.getNombreRestaurante(),
-                user.getEmail()
+                user.getEmail(),
+                user.getImagen()
         );
 
         return Optional.of(dto);
     }
 
-    public void uploadImage(UUID userId, byte[] image) {
+    public void uploadImage(UUID userId, String image) {
         RestaurantUser user = getRestaurantUserById(userId);
         user.setImagen(image);
         restaurantUserRepository.save(user);
     }
 
-    public byte[] getImage(UUID userId) {
+    public String getImage(UUID userId) {
         return getRestaurantUserById(userId).getImagen();
     }
 }
