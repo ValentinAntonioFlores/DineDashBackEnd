@@ -1,7 +1,9 @@
 package com.example.demo.model.restaurantUser;
 
+import com.example.demo.model.category.Category;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -23,6 +25,14 @@ public class RestaurantUser {
 
     @Column(name = "imagen", columnDefinition = "TEXT")
     private String imagen; // Columna para almacenar la imagen
+
+    @ManyToMany
+    @JoinTable(
+            name = "restaurant_category",
+            joinColumns = @JoinColumn(name = "restaurant_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories;
 
     public RestaurantUser() {}
 
@@ -47,7 +57,10 @@ public class RestaurantUser {
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
 
+    public Set<Category> getCategories() { return categories; }
+    public void setCategories(Set<Category> categories) { this.categories = categories; }
+
     public boolean isPresent() {
-        return idRestaurante != null;
+        return this.idRestaurante != null;
     }
 }

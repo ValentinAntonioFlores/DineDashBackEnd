@@ -25,6 +25,10 @@ public class RestaurantUserService {
 
     // RestaurantUserService.java
 
+    public List<RestaurantUser> searchRestaurantsByName(String name) {
+        return restaurantUserRepository.findByNombreRestauranteContainingIgnoreCase(name);
+    }
+
     public RestaurantUserDTO registerRestaurant(CreateRestaurantUserDTO restaurantUserDTO) {
         // Check if the email exists in ClientUser or RestaurantUser
         Optional<ClientUser> clientUserOptional = clientUserRepository.findByEmail(restaurantUserDTO.getEmail());
