@@ -2,35 +2,37 @@ package com.example.demo.model.restaurantUser.DTO;
 
 import com.example.demo.model.table.DTO.TableDTO;
 
+import java.util.List;
+
 public class PublicRestaurantDTO {
 
-    private Long id;
-    private String name;
-    private String imageUrl;
-    private TableDTO layout;
+        private String id;
+        private String name;
+        private String imageUrl;
+        private List<TableDTO> layout;
 
 
-    public PublicRestaurantDTO(Long id, String name, String imageUrl, TableDTO layout) {
-        this.id = id;
-        this.name = name;
-        this.imageUrl = imageUrl;
-        this.layout = layout;
+        public PublicRestaurantDTO(String id, String name, String imageUrl, List<TableDTO> layout) {
+            this.id = id;
+            this.name = name;
+            this.imageUrl = imageUrl;
+            this.layout = layout;
     }
 
-    public Long getId() {
-        return id;
-    }
+        public String getId() {
+            return id;
+        }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-    public String getName() {
-        return name;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public void setName(String name) {
-        this.name = name;
+        public void setName(String name) {
+            this.name = name;
         }
 
         public String getImageUrl() {
@@ -41,11 +43,9 @@ public class PublicRestaurantDTO {
             this.imageUrl = imageUrl;
         }
 
-        public TableDTO getLayout() {
+        public List<TableDTO> getLayout() {
             return layout;
         }
 
-        public void setLayout(TableDTO layout) {
-            this.layout = layout;
-        }
+        public void setLayout(List<TableDTO> layout) { this.layout = layout; }
 }

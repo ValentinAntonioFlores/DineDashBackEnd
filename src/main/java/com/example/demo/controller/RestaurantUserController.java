@@ -5,6 +5,8 @@ import com.example.demo.jwt.TokenBlackListService;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.DTO.RestaurantLoginResponseDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
+import com.example.demo.model.table.DTO.TableDTO;
+import com.example.demo.repository.RestaurantUserRepository;
 import com.example.demo.services.RestaurantUserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,7 @@ import org.springframework.validation.BindingResult;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurantUsers")
@@ -29,6 +32,8 @@ public class RestaurantUserController {
     private JwtUtility jwtUtility;
     @Autowired
     private TokenBlackListService tokenBlackListService;
+    @Autowired
+    private RestaurantUserRepository restaurantUserRepository;
 
     // RestaurantUserController.java
 
@@ -60,7 +65,7 @@ public class RestaurantUserController {
     public ResponseEntity<RestaurantUserDTO> getUserById(@PathVariable UUID id) {
         try {
             RestaurantUser user = restaurantUserService.getRestaurantUserById(id);
-            RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail(), user.getImagen());
+            RestaurantUserDTO userDTO = new RestaurantUserDTO(user.getIdRestaurante(), user.getNombreRestaurante(), user.getEmail(), user.getImagen(), user.getLayout());
             return ResponseEntity.ok(userDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();
@@ -161,11 +166,32 @@ public class RestaurantUserController {
 
         return restaurants.stream()
                 .map(r -> new PublicRestaurantDTO(
-                        r.getId(),
-                        r.getRestaurantName(),
-                        r.getImageUrl(),     // or whatever field you store image in
-                        r.getLayout()        // optional: layout preview
+                        r.getIdRestaurante().toString(),
+                        r.getNombreRestaurante(),
+                        r.getImagen(), // or whatever field you store image in// optional: layout preview
+                        r.getLayout().stream()
+                                .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
+                                .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/restaurants/{id}")
+    public ResponseEntity<PublicRestaurantDTO> getRestaurantById(@PathVariable UUID id) {
+        Optional<RestaurantUser> restaurant = restaurantUserRepository.findById(id);
+        if (restaurant.isPresent()) {
+            RestaurantUser r = restaurant.get();
+            PublicRestaurantDTO restaurantDTO = new PublicRestaurantDTO(
+                    r.getIdRestaurante().toString(),
+                    r.getNombreRestaurante(),
+                    r.getImagen(), // or whatever field you store image in
+                    r.getLayout().stream()
+                            .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
+                            .collect(Collectors.toList())
+            );
+            return ResponseEntity.ok(restaurantDTO);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

@@ -5,6 +5,7 @@ import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.clientUser.DTO.CreateClientUserDTO;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.RestaurantUser;
+import com.example.demo.model.table.DTO.TableDTO;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,9 +52,9 @@ public class RestaurantUserService {
                 savedRestaurantUser.getIdRestaurante(),
                 savedRestaurantUser.getNombreRestaurante(),
                 savedRestaurantUser.getEmail(),
-                savedRestaurantUser.getImagen()
-
-        );
+                savedRestaurantUser.getImagen(),
+                savedRestaurantUser.getLayout()
+                );
     }
 
 
@@ -74,7 +75,8 @@ public class RestaurantUserService {
                         user.getIdRestaurante(),
                         user.getNombreRestaurante(),
                         user.getEmail(),
-                        user.getImagen()
+                        user.getImagen(),
+                        user.getLayout()
                 ))
                 .toList();
     }
@@ -120,7 +122,8 @@ public class RestaurantUserService {
                 user.getIdRestaurante(),
                 user.getNombreRestaurante(),
                 user.getEmail(),
-                user.getImagen()
+                user.getImagen(),
+                user.getLayout()
         );
 
         return Optional.of(dto);

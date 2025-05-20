@@ -104,14 +104,14 @@ public class TableService {
         RestaurantUser restaurantUser = restaurantUserRepository.findById(restaurantId)
                 .orElseThrow(() -> new IllegalArgumentException("Restaurant not found"));
 
-        for (int x = 0; x < gridLayout.size(); x++) {
-            for (int y = 0; y < gridLayout.get(x).size(); y++) {
-                GridLayoutDTO cell = gridLayout.get(x).get(y);
+        for (int y = 0; y < gridLayout.size(); y++) {
+            for (int x = 0; x < gridLayout.get(y).size(); x++) {
+                GridLayoutDTO cell = gridLayout.get(y).get(x);  // notice: grid[row][col]
                 if (cell.isTable()) {
                     RestaurantTable table = new RestaurantTable();
                     table.setRestaurant(restaurantUser);
-                    table.setPositionX(x); // Use loop index
-                    table.setPositionY(y); // Use loop index
+                    table.setPositionX(x); // now correct
+                    table.setPositionY(y);
                     table.setCapacity(cell.getCapacity());
                     table.setAvailable(cell.isAvailable());
                     tableRepository.save(table);
@@ -122,40 +122,33 @@ public class TableService {
 
     @Transactional
     public List<List<GridLayoutDTO>> getGridLayout(UUID restaurantId) {
-        // Retrieve all tables associated with the restaurant
         List<RestaurantTable> tables = tableRepository.findByRestaurant_IdRestaurante(restaurantId);
-        if (tables.isEmpty()) {
-            return List.of();  // Return empty grid if no tables are found
-        }
+        if (tables.isEmpty()) return List.of();
 
-        // Find the max X and Y positions for grid dimensions
         int maxX = tables.stream().mapToInt(RestaurantTable::getPositionX).max().orElse(0);
         int maxY = tables.stream().mapToInt(RestaurantTable::getPositionY).max().orElse(0);
 
-        // Initialize the grid based on max X and Y
         List<List<GridLayoutDTO>> grid = new java.util.ArrayList<>();
-        for (int x = 0; x <= maxX; x++) {
+        for (int y = 0; y <= maxY; y++) {
             List<GridLayoutDTO> row = new java.util.ArrayList<>();
-            for (int y = 0; y <= maxY; y++) {
-                row.add(new GridLayoutDTO());  // Initialize each cell as empty
+            for (int x = 0; x <= maxX; x++) {
+                row.add(new GridLayoutDTO());
             }
             grid.add(row);
         }
 
-        // Fill grid with table data from the database
         for (RestaurantTable table : tables) {
             GridLayoutDTO dto = new GridLayoutDTO();
-            dto.setTable(true);  // Mark this cell as a table
-            dto.setCapacity(table.getCapacity());  // Set table capacity
-            dto.setAvailable(table.isAvailable());  // Set availability (true if available)
+            dto.setTable(true);
+            dto.setCapacity(table.getCapacity());
+            dto.setAvailable(table.isAvailable());
 
-            // Ensure we don't go out of bounds in the grid
             if (table.getPositionX() <= maxX && table.getPositionY() <= maxY) {
-                grid.get(table.getPositionX()).set(table.getPositionY(), dto);
+                grid.get(table.getPositionY()).set(table.getPositionX(), dto);
             }
         }
 
         return grid;
-    };
+    }
 }
 

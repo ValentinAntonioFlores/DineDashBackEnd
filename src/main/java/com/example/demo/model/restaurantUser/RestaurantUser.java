@@ -1,9 +1,10 @@
 package com.example.demo.model.restaurantUser;
 
-import com.example.demo.model.category.Category;
+import com.example.demo.model.table.RestaurantTable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import java.util.Set;
+
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,13 +27,9 @@ public class RestaurantUser {
     @Column(name = "imagen", columnDefinition = "TEXT")
     private String imagen; // Columna para almacenar la imagen
 
-    @ManyToMany
-    @JoinTable(
-            name = "restaurant_category",
-            joinColumns = @JoinColumn(name = "restaurant_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories;
+    @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RestaurantTable> layout;  // Relationship to Table (your separate tables)
+
 
     public RestaurantUser() {}
 
@@ -57,10 +54,10 @@ public class RestaurantUser {
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
 
-    public Set<Category> getCategories() { return categories; }
-    public void setCategories(Set<Category> categories) { this.categories = categories; }
+    public List<RestaurantTable> getLayout() { return layout; }
+    public void setLayout(List<RestaurantTable> layout) { this.layout = layout; }
 
     public boolean isPresent() {
-        return this.idRestaurante != null;
+        return idRestaurante != null;
     }
 }

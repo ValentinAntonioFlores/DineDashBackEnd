@@ -23,7 +23,9 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(jwtInterceptor)
                 .addPathPatterns("/clientUsers/**", "/restaurantUsers/**") // Apply interceptor to these routes
                 .excludePathPatterns("/clientUsers/register", "/clientUsers/login",
-                        "/restaurantUsers/register", "/restaurantUsers/login"); // Exclude public routes
+                        "/restaurantUsers/register", "/restaurantUsers/login",
+                        "/restaurantUsers/public/**"
+                ); // Exclude public routes
     }
 
     @Override
