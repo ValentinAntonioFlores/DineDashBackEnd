@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.reservation.DTO.*;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
@@ -25,11 +26,17 @@ public class ReservationController {
     @Autowired
     private RestaurantUserService restaurantUserService;
 
+
+
     @PostMapping("all")
     public ResponseEntity<List<Reservation>> getAllReservations() {
         List<Reservation> reservations = reservationService.getAllReservations();
         return ResponseEntity.ok(reservations);
     }
+
+
+
+
 
     @PostMapping("by-id")
     public ResponseEntity<Reservation> getReservationById(@RequestBody GetReservationByIdDTO dto) {
@@ -76,4 +83,11 @@ public class ReservationController {
         reservationService.cancelReservation(dto.getReservationId());
         return ResponseEntity.ok("Reservation canceled successfully.");
     }
+
+    @GetMapping("/client-users")
+    public ResponseEntity<List<ClientUser>> getAllClientUsersWithReservations() {
+        List<ClientUser> users = reservationService.getAllClientUsersWithReservations();
+        return ResponseEntity.ok(users);
+    }
+
 }

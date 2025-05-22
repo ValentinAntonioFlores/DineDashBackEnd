@@ -1,5 +1,6 @@
 package com.example.demo.model.reservation;
 
+import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import jakarta.persistence.*;
@@ -19,6 +20,10 @@ public class Reservation {
     private RestaurantTable table;
 
     @ManyToOne
+    @JoinColumn(name = "client_user_id", nullable = false)
+    private ClientUser clientUser;
+
+    @ManyToOne
     @JoinColumn(name = "restaurant_user_id", nullable = false)
     private RestaurantUser restaurantUser;
 
@@ -30,9 +35,10 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(RestaurantTable table, RestaurantUser restaurantUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public Reservation(RestaurantTable table, RestaurantUser restaurantUser,ClientUser clientUser ,LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         this.table = table;
         this.restaurantUser = restaurantUser;
+        this.clientUser = clientUser;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
@@ -56,6 +62,14 @@ public class Reservation {
     }
     public void setRestaurantUser(RestaurantUser restaurantUser) {
         this.restaurantUser = restaurantUser;
+    }
+
+    public ClientUser getClientUser() {
+        return clientUser;
+    }
+
+    public void setClientUser(ClientUser clientUser) {
+        this.clientUser = clientUser;
     }
 
     public LocalDateTime getStartTime() {

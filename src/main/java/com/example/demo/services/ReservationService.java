@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -75,8 +76,9 @@ public class ReservationService {
         return reservationRepository.findByTable(table);
     }
 
-
-
+    public List<ClientUser> getAllClientUsersWithReservations() {
+        return reservationRepository.findDistinctClientUsers();
+    }
 
     private static class ReservationNotFoundException extends Exception {
         public ReservationNotFoundException(String s) {
