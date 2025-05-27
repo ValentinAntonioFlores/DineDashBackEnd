@@ -29,7 +29,10 @@ public class TableService {
         List<RestaurantTable> tables = tableRepository.findByRestaurant_IdRestaurante(restaurantId);
         return tables.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
+
     public RestaurantTable getTableById(UUID tableId) {
+        System.out.println("Received tableId: " + tableId); // Print para debug
+
         return tableRepository.findById(tableId)
                 .orElseThrow(() -> new IllegalArgumentException("Table not found with ID: " + tableId));
     }

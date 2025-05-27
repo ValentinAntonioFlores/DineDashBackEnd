@@ -5,7 +5,6 @@ import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -20,7 +19,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
 
     List<Reservation> findByRestaurantUser(RestaurantUser restaurantUser); // Ensure method name matches the field name
 
-    @Query("SELECT DISTINCT r.clientUser FROM Reservation r")
-    List<ClientUser> findDistinctClientUsers();
+    List<Reservation> findByClientUser(ClientUser clientUser);
+
 }
 

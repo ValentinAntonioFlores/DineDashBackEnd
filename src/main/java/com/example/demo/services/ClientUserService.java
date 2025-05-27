@@ -60,6 +60,10 @@ public class ClientUserService {
         ));
     }
 
+    public Optional<ClientUser> getClientUserEntityById(UUID id) {
+        return clientUserRepository.findById(id);
+    }
+
 
     // ✔ Obtener usuario por email
     public Optional<ClientUserDTO> getClientByEmail(String email) {

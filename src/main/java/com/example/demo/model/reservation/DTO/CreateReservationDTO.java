@@ -7,19 +7,22 @@ import java.util.UUID;
 
 public class CreateReservationDTO {
 
+    @JsonProperty("idTable")
     private UUID idTable;
 
     @JsonProperty("restaurantId")
     private UUID restaurantUserId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    @JsonProperty("userId")
+    private UUID idUsuario;
 
     // Getters and setters
     public UUID getTableId() {
         return idTable;
     }
 
-    public void setTableId(UUID tableId) {
+    public void setTableId(UUID idTable) {
         this.idTable = idTable;
     }
 
@@ -46,4 +49,7 @@ public class CreateReservationDTO {
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
     }
+
+    public UUID getUserId(){ return idUsuario;}
+    public void setUserId(UUID idUsuario){ this.idUsuario = idUsuario; }
 }

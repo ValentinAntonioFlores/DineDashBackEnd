@@ -1,6 +1,7 @@
 package com.example.demo.services;
 
 import com.example.demo.model.clientUser.ClientUser;
+import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,7 +23,7 @@ public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    public Reservation createReservation(RestaurantTable table, RestaurantUser user, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public Reservation createReservation(RestaurantTable table, RestaurantUser restaurantUser, ClientUser clientUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         if (startTime.isAfter(endTime)) {
             throw new IllegalArgumentException("Start time must be before end time.");
         }
@@ -33,7 +35,8 @@ public class ReservationService {
 
         Reservation reservation = new Reservation();
         reservation.setTable(table);
-        reservation.setUser(user);
+        reservation.setRestaurantUser(restaurantUser);
+        reservation.setClientUser(clientUser);
         reservation.setStartTime(startTime);
         reservation.setEndTime(endTime);
         reservation.setStatus(status);
@@ -76,12 +79,14 @@ public class ReservationService {
         return reservationRepository.findByTable(table);
     }
 
-    public List<ClientUser> getAllClientUsersWithReservations() {
-        return reservationRepository.findDistinctClientUsers();
-    }
 
     private static class ReservationNotFoundException extends Exception {
         public ReservationNotFoundException(String s) {
         }
     }
+
+    public List<Reservation> getReservationsByClientUser(ClientUser clientUser) {
+        return reservationRepository.findByClientUser(clientUser);
+    }
+
 }

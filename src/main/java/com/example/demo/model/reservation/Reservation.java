@@ -1,10 +1,12 @@
 package com.example.demo.model.reservation;
 
 import com.example.demo.model.clientUser.ClientUser;
+import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -20,12 +22,12 @@ public class Reservation {
     private RestaurantTable table;
 
     @ManyToOne
-    @JoinColumn(name = "client_user_id", nullable = false)
-    private ClientUser clientUser;
-
-    @ManyToOne
     @JoinColumn(name = "restaurant_user_id", nullable = false)
     private RestaurantUser restaurantUser;
+
+    @ManyToOne
+    @JoinColumn(name = "client_user_id", nullable = false)
+    private ClientUser clientUser;
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -35,13 +37,13 @@ public class Reservation {
 
     public Reservation() {}
 
-    public Reservation(RestaurantTable table, RestaurantUser restaurantUser,ClientUser clientUser ,LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
+    public Reservation(RestaurantTable table, RestaurantUser restaurantUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status, ClientUser clientUser) {
         this.table = table;
         this.restaurantUser = restaurantUser;
-        this.clientUser = clientUser;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
+        this.clientUser = clientUser;
     }
     public UUID getId() {
         return id;
@@ -64,10 +66,7 @@ public class Reservation {
         this.restaurantUser = restaurantUser;
     }
 
-    public ClientUser getClientUser() {
-        return clientUser;
-    }
-
+    public ClientUser getClientUser() { return clientUser;}
     public void setClientUser(ClientUser clientUser) {
         this.clientUser = clientUser;
     }
