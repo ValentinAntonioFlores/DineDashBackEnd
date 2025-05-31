@@ -27,16 +27,23 @@ public class RestaurantUser {
     @Column(name = "imagen", columnDefinition = "TEXT")
     private String imagen; // Columna para almacenar la imagen
 
+    @Column(nullable = true)
+    private Double latitude; // Latitude for geolocation
+
+    @Column(nullable = true)
+    private Double longitude; // Longitude for geolocation
+
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantTable> layout;  // Relationship to Table (your separate tables)
 
-
     public RestaurantUser() {}
 
-    public RestaurantUser(String nombreRestaurante, String email, String contraseña) {
+    public RestaurantUser(String nombreRestaurante, String email, String contraseña, Double latitude, Double longitude) {
         this.nombreRestaurante = nombreRestaurante;
         this.email = email;
         this.contraseña = contraseña;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public UUID getIdRestaurante() { return idRestaurante; }
@@ -53,6 +60,11 @@ public class RestaurantUser {
 
     public String getImagen() { return imagen; }
     public void setImagen(String imagen) { this.imagen = imagen; }
+
+    public Double getLatitude() { return latitude; }
+    public void setLatitude(Double latitude) { this.latitude = latitude; }
+    public Double getLongitude() { return longitude; }
+    public void setLongitude(Double longitude) { this.longitude = longitude; }
 
     public List<RestaurantTable> getLayout() { return layout; }
     public void setLayout(List<RestaurantTable> layout) { this.layout = layout; }

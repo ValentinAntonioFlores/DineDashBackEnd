@@ -44,7 +44,9 @@ public class RestaurantUserService {
         RestaurantUser newRestaurantUser = new RestaurantUser(
                 restaurantUserDTO.getNombreRestaurante(),
                 restaurantUserDTO.getEmail(),
-                restaurantUserDTO.getContraseña() // Contraseña sin encriptar
+                restaurantUserDTO.getContraseña(), // Contraseña sin encriptar
+                restaurantUserDTO.getLatitude(),  // Latitude
+                restaurantUserDTO.getLongitude()  // Longitude
         );
 
         RestaurantUser savedRestaurantUser = restaurantUserRepository.save(newRestaurantUser);
@@ -138,5 +140,34 @@ public class RestaurantUserService {
     public String getImage(UUID userId) {
         return getRestaurantUserById(userId).getImagen();
     }
+
+    public List<RestaurantUserDTO> searchRestaurantsByLocation(double latitude, double longitude, double radius) {
+        List<RestaurantUser> restaurants = restaurantUserRepository.findAll(); // Replace with a custom query if needed
+        return restaurants.stream()
+                .filter(restaurant -> {
+                    double distance = calculateDistance(latitude, longitude, restaurant.getLatitude(), restaurant.getLongitude());
+                    return distance <= radius;
+                })
+                .map(restaurant -> new RestaurantUserDTO(
+                        restaurant.getIdRestaurante(),
+                        restaurant.getNombreRestaurante(),
+                        restaurant.getEmail(),
+                        restaurant.getImagen(),
+                        restaurant.getLayout()
+                ))
+                .toList();
+    }
+
+    private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
+        double earthRadius = 6371; // Radius of the Earth in kilometers
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2)) *
+                        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return earthRadius * c;
+    }
+
 }
 
