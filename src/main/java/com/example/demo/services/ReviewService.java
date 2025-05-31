@@ -40,10 +40,10 @@ public class ReviewService {
     }
 
     public List<Review> getReviewsByRestaurant(UUID restaurantId) {
-        return reviewRepository.findByRestaurantId(restaurantId);
+        return reviewRepository.findByRestaurantUser_IdRestaurante(restaurantId);
     }
 
     public List<Review> getReviewsByClient(UUID clientId) {
-        return reviewRepository.findByClientId(clientId);
+        return reviewRepository.findByClientUser_IdUsuario(clientId);
     }
 }

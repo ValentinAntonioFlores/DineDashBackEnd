@@ -194,4 +194,16 @@ public class RestaurantUserController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/search/location")
+    public ResponseEntity<List<RestaurantUserDTO>> searchRestaurantsByLocation(
+            @RequestParam double latitude,
+            @RequestParam double longitude,
+            @RequestParam double radius) {
+        List<RestaurantUserDTO> restaurants = restaurantUserService.searchRestaurantsByLocation(latitude, longitude, radius);
+        return ResponseEntity.ok(restaurants);
+    }
+
+
+
 }
