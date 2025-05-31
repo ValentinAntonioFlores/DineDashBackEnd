@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class FavoriteService {
@@ -27,15 +26,7 @@ public class FavoriteService {
         }
     }
 
-    public List<Favorite> getFavoritesForClient(UUID clientId) {
-        return favoriteRepository.findByClientUser_IdUsuario(clientId);
+    public List<Favorite> getFavoritesForClient(ClientUser clientUser) {
+        return favoriteRepository.findByClientUser(clientUser);
     }
-
-
-    public void removeFavorite(ClientUser clientUser, RestaurantUser restaurantUser) {
-        Favorite favorite = favoriteRepository.findByClientUserAndRestaurantUser(clientUser, restaurantUser)
-                .orElseThrow(() -> new IllegalArgumentException("Favorite not found."));
-        favoriteRepository.delete(favorite);
-    }
-
 }

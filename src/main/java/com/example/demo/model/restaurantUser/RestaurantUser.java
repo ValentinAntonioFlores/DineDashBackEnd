@@ -33,41 +33,15 @@ public class RestaurantUser {
     @Column(nullable = true)
     private Double longitude; // Longitude for geolocation
 
-    // Google OAuth2 fields
-    private String googleId;
-    private Boolean isGoogleUser = false;
-
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantTable> layout;  // Relationship to Table (your separate tables)
 
-
     public RestaurantUser() {}
-
-    private Boolean emailNotificationsEnabled = true;
-
-    public Boolean getEmailNotificationsEnabled() {
-        return emailNotificationsEnabled;
-    }
-
-    public void setEmailNotificationsEnabled(Boolean emailNotificationsEnabled) {
-        this.emailNotificationsEnabled = emailNotificationsEnabled;
-    }
 
     public RestaurantUser(String nombreRestaurante, String email, String contraseña, Double latitude, Double longitude) {
         this.nombreRestaurante = nombreRestaurante;
         this.email = email;
         this.contraseña = contraseña;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    // Constructor for Google OAuth2 users
-    public RestaurantUser(String nombreRestaurante, String email, String googleId, Boolean isGoogleUser, Double latitude, Double longitude) {
-        this.nombreRestaurante = nombreRestaurante;
-        this.email = email;
-        this.googleId = googleId;
-        this.isGoogleUser = isGoogleUser;
-        this.contraseña = null; // Google users don't need a password
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -98,10 +72,4 @@ public class RestaurantUser {
     public boolean isPresent() {
         return idRestaurante != null;
     }
-
-    public String getGoogleId() { return googleId; }
-    public void setGoogleId(String googleId) { this.googleId = googleId; }
-
-    public Boolean getIsGoogleUser() { return isGoogleUser; }
-    public void setIsGoogleUser(Boolean isGoogleUser) { this.isGoogleUser = isGoogleUser; }
 }

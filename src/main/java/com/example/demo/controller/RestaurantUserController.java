@@ -2,14 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
-import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.DTO.RestaurantLoginResponseDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.DTO.TableDTO;
 import com.example.demo.repository.RestaurantUserRepository;
 import com.example.demo.services.RestaurantUserService;
-import com.example.demo.services.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -36,10 +34,6 @@ public class RestaurantUserController {
     private TokenBlackListService tokenBlackListService;
     @Autowired
     private RestaurantUserRepository restaurantUserRepository;
-
-    @Autowired
-    private ReviewService reviewService;
-
 
     // RestaurantUserController.java
 
@@ -177,10 +171,7 @@ public class RestaurantUserController {
                         r.getImagen(), // or whatever field you store image in// optional: layout preview
                         r.getLayout().stream()
                                 .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
-                                .collect(Collectors.toList()),
-                        reviewService.calculateAverageRating(r.getIdRestaurante()), // Add this
-                        r.getLatitude(),
-                        r.getLongitude()
+                                .collect(Collectors.toList())
                 ))
                 .collect(Collectors.toList());
     }
@@ -196,10 +187,7 @@ public class RestaurantUserController {
                     r.getImagen(), // or whatever field you store image in
                     r.getLayout().stream()
                             .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
-                            .collect(Collectors.toList()),
-                    reviewService.calculateAverageRating(r.getIdRestaurante()),// Add this
-                    r.getLatitude(),
-                    r.getLongitude()
+                            .collect(Collectors.toList())
             );
             return ResponseEntity.ok(restaurantDTO);
         } else {
@@ -216,43 +204,6 @@ public class RestaurantUserController {
         return ResponseEntity.ok(restaurants);
     }
 
-    @PutMapping("/{id}/location")
-    public ResponseEntity<String> updateLocation(@PathVariable UUID id, @RequestBody UpdateLocationDTO dto) {
-        restaurantUserService.updateLocation(id, dto);
-        return ResponseEntity.ok("Location updated successfully.");
-    }
 
-    // RestaurantUserController.java
-    @GetMapping("/{id}/getlocation")
-    public ResponseEntity<LocationDTO> getLocation(@PathVariable UUID id) {
-        try {
-            LocationDTO location = restaurantUserService.getRestaurantLocation(id);
-            return ResponseEntity.ok(location);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    // Get current email notification preference
-    @GetMapping("/{id}/notifications")
-    public ResponseEntity<Boolean> getEmailNotifications(@PathVariable UUID id) {
-        try {
-            boolean enabled = restaurantUserService.getEmailNotifications(id);
-            return ResponseEntity.ok(enabled);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-    }
-
-    // Update email notification preference
-    @PutMapping("/{id}/notifications")
-    public ResponseEntity<String> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
-        try {
-            restaurantUserService.updateEmailNotifications(id, enabled);
-            return ResponseEntity.ok("Email notifications updated to: " + enabled);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
-    }
 
 }

@@ -19,8 +19,6 @@ public class Product {
 
     private String image;
 
-    private String category;
-
     @ManyToOne
     @JoinColumn(name = "restaurant_user_id")
     private RestaurantUser restaurantUser;
@@ -72,13 +70,5 @@ public class Product {
 
     public void setRestaurantUser(RestaurantUser restaurantUser) {
         this.restaurantUser = restaurantUser;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 }
