@@ -40,6 +40,7 @@ public class RestaurantUser {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantTable> layout;  // Relationship to Table (your separate tables)
 
+
     public RestaurantUser() {}
 
     private Boolean emailNotificationsEnabled = true;
