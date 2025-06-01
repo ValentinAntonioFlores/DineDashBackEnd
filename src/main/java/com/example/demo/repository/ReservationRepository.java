@@ -5,6 +5,8 @@ import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,19 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
     List<Reservation> findByRestaurantUser(RestaurantUser restaurantUser); // Ensure method name matches the field name
 
     List<Reservation> findByClientUser(ClientUser clientUser);
+
+    @Query("""
+    SELECT r FROM Reservation r
+    WHERE r.table.restaurant.idRestaurante = :restaurantId
+    AND r.status = 'ACCEPTED'
+    AND r.startTime < :endTime
+    AND r.endTime > :startTime
+""")
+    List<Reservation> findAcceptedReservationsWithOverlap(
+            @Param("restaurantId") UUID restaurantId,
+            @Param("startTime") LocalDateTime startTime,
+            @Param("endTime") LocalDateTime endTime
+    );
 
 }
 

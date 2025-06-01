@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
         import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/reservations")
@@ -102,9 +103,12 @@ public class ReservationController {
 
         List<ReservationSimpleDTO> response = reservations.stream()
                 .map(r -> new ReservationSimpleDTO(
+                        r.getId(),
                         r.getRestaurant().getNombreRestaurante(),  // restaurant name via the table's restaurant
                         r.getStatus().name(),
-                        r.getClientUser().getIdUsuario()
+                        r.getClientUser().getIdUsuario(),
+                        r.getStartTime(),
+                        r.getEndTime()
                 ))
                 .toList();
 
@@ -128,5 +132,15 @@ public class ReservationController {
         return ResponseEntity.ok(filtered);
     }
 
+    @PostMapping("/reserved-tables")
+    public ResponseEntity<List<UUID>> getReservedTableIds(@RequestBody GetReservedTablesDTO dto) {
+        List<UUID> reservedTableIds = reservationService.getReservedTableIds(dto.getRestaurantId(), dto.getStartTime(), dto.getEndTime());
+        return ResponseEntity.ok(reservedTableIds);
+    }
+
+
+
+
+    //Que llame en que tiempo en que horario y dia se hizo y  el status. Deberia de hacerlo que utilize el restaurant id ?
 }
 
