@@ -14,6 +14,7 @@ public class ReservationDetailDTO {
         this.clientUserName = clientUserName;
         this.tableId = tableId;
         this.status = status;
+
     }
 
     public UUID getReservationId() {

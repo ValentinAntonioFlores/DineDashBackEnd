@@ -89,4 +89,12 @@ public class ReservationService {
         return reservationRepository.findByClientUser(clientUser);
     }
 
+    public List<UUID> getReservedTableIds(UUID restaurantId, LocalDateTime startTime, LocalDateTime endTime) {
+        List<Reservation> reservations = reservationRepository.findAcceptedReservationsWithOverlap(restaurantId, startTime, endTime);
+        return reservations.stream()
+                .map(res -> res.getTable().getId())
+                .distinct()
+                .toList();
+    }
+
 }
