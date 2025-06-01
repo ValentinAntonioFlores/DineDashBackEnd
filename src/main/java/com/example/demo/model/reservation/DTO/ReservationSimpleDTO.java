@@ -1,6 +1,6 @@
 package com.example.demo.model.reservation.DTO;
 
-import com.example.demo.model.reservation.NotificationStatus;
+import com.example.demo.model.reservation.ReservationStatus;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,17 +12,15 @@ public class ReservationSimpleDTO {
     private UUID userId;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private String notificationStatus;
 
 
-    public ReservationSimpleDTO(UUID reservationId, String restaurantName, String reservationStatus, UUID userId, LocalDateTime startTime, LocalDateTime endTime, String notificationStatus) {
+    public ReservationSimpleDTO(UUID reservationId, String restaurantName, String reservationStatus, UUID userId, LocalDateTime startTime, LocalDateTime endTime) {
         this.reservationId = reservationId;
         this.restaurantName = restaurantName;
         this.reservationStatus = reservationStatus;
         this.userId = userId;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.notificationStatus = notificationStatus; // Default to NOT_SEEN
     }
 
     // getters and setters
@@ -66,14 +64,6 @@ public class ReservationSimpleDTO {
     }
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public String getNotificationStatus() {
-        return notificationStatus;
-    }
-
-    public void setNotificationStatus(String notificationStatus) {
-        this.notificationStatus = notificationStatus;
     }
 
 }

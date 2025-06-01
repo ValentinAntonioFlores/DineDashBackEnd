@@ -2,7 +2,6 @@ package com.example.demo.repository;
 
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.reservation.Reservation;
-import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -36,9 +35,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, UUID> 
             @Param("startTime") LocalDateTime startTime,
             @Param("endTime") LocalDateTime endTime
     );
-
-
-    long countByRestaurantUser_IdRestauranteAndStatus(UUID restaurantId, ReservationStatus status);
 
 }
 

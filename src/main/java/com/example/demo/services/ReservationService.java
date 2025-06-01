@@ -2,7 +2,6 @@ package com.example.demo.services;
 
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.clientUser.DTO.ClientUserDTO;
-import com.example.demo.model.reservation.NotificationStatus;
 import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -12,7 +11,6 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -25,10 +23,7 @@ public class ReservationService {
     @Autowired
     private ReservationRepository reservationRepository;
 
-    @Autowired
-    private ClientUserService clientUserService;
-
-    public Reservation createReservation(RestaurantTable table, RestaurantUser restaurantUser, ClientUser clientUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status, NotificationStatus notificationStatus) {
+    public Reservation createReservation(RestaurantTable table, RestaurantUser restaurantUser, ClientUser clientUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status) {
         if (startTime.isAfter(endTime)) {
             throw new IllegalArgumentException("Start time must be before end time.");
         }
@@ -45,7 +40,6 @@ public class ReservationService {
         reservation.setStartTime(startTime);
         reservation.setEndTime(endTime);
         reservation.setStatus(status);
-        reservation.setNotificationStatus(notificationStatus);
 
         return reservationRepository.save(reservation);
     }
@@ -71,20 +65,6 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public void markNotificationsAsSeenByIds(List<UUID> reservationIds) {
-        List<Reservation> reservationsToUpdate = reservationRepository.findAllById(reservationIds);
-
-        for (Reservation reservation : reservationsToUpdate) {
-            // Only update if the reservation status is ACCEPTED or REJECTED
-            // and the current notification status is NOT_SEEN
-            if ((reservation.getStatus() == ReservationStatus.ACCEPTED ||
-                    reservation.getStatus() == ReservationStatus.REJECTED) &&
-                    reservation.getNotificationStatus() == NotificationStatus.NOT_SEEN) {
-                reservation.setNotificationStatus(NotificationStatus.SEEN);
-                reservationRepository.save(reservation);
-            }
-        }
-    }
 
     public List<Reservation> getAllReservations() {
         return reservationRepository.findAll();
@@ -116,19 +96,5 @@ public class ReservationService {
                 .distinct()
                 .toList();
     }
-
-    public boolean userHasReservationOnDay(ClientUser user, RestaurantUser restaurant, LocalDate date) {
-        List<Reservation> reservations = getReservationsByClientUser(user);
-        return reservations.stream()
-                .anyMatch(r ->
-                        r.getRestaurant().getIdRestaurante().equals(restaurant.getIdRestaurante()) &&
-                                r.getStartTime().toLocalDate().equals(date)
-                );
-    }
-
-    public long getPendingReservationsCountByRestaurant(UUID restaurantId) {
-        return reservationRepository.countByRestaurantUser_IdRestauranteAndStatus(restaurantId, ReservationStatus.PENDING);
-    }
-
 
 }
