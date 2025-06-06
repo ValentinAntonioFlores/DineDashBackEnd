@@ -16,7 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-        import java.util.List;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -60,14 +61,23 @@ public class ReservationController {
     }
 
     @PostMapping
-    public ResponseEntity<Reservation> createReservation(@RequestBody CreateReservationDTO reservationDTO) {
+    public ResponseEntity<?> createReservation(@RequestBody CreateReservationDTO reservationDTO) {
         RestaurantTable table = tableService.getTableById(reservationDTO.getTableId());
         RestaurantUser restaurantUser = restaurantUserService.getRestaurantUserById(reservationDTO.getRestaurantUserId());
         Optional<ClientUser> clientUserOpt = clientUserService.getClientUserEntityById(reservationDTO.getUserId());
+
         if (clientUserOpt.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
         ClientUser clientUser = clientUserOpt.get();
+
+        // ✅ Prevent duplicate same-day reservations
+        LocalDate requestedDate = reservationDTO.getStartTime().toLocalDate();
+        if (reservationService.userHasReservationOnDay(clientUser, restaurantUser, requestedDate)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("You already have a reservation for this restaurant on " + requestedDate + ".");
+        }
 
         Reservation reservation = reservationService.createReservation(
                 table,
@@ -77,8 +87,10 @@ public class ReservationController {
                 reservationDTO.getEndTime(),
                 ReservationStatus.PENDING
         );
+
         return ResponseEntity.ok(reservation);
     }
+
 
     @PostMapping("update-status")
     public ResponseEntity<Reservation> updateReservationStatus(@RequestBody UpdateReservationStatusDTO statusDTO) {
@@ -126,7 +138,9 @@ public class ReservationController {
                         r.getId(),
                         r.getClientUser().getNombre(),  // or getUsername()
                         r.getTable().getId(),
-                        r.getStatus().name()
+                        r.getStatus().name(),
+                        r.getStartTime(),
+                        r.getEndTime()
                 )).toList();
 
         return ResponseEntity.ok(filtered);

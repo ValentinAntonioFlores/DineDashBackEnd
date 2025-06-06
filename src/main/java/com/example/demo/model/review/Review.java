@@ -2,6 +2,7 @@ package com.example.demo.model.review;
 
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.clientUser.ClientUser;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.UUID;
 
@@ -13,6 +14,7 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "restaurant_user_id", nullable = true)
     private RestaurantUser restaurantUser;
