@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.review.DTO.CreateReviewRequestDTO;
+import com.example.demo.model.review.DTO.ReviewDTO;
+import com.example.demo.model.review.DTO.UpdateReviewRequestDTO;
 import com.example.demo.model.review.Review;
 import com.example.demo.services.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.stream.Collectors;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,32 +21,42 @@ public class ReviewController {
     private ReviewService reviewService;
 
     @PostMapping("/client-to-restaurant")
-    public ResponseEntity<Review> createClientToRestaurantReview(
-            @RequestParam UUID restaurantId,
-            @RequestParam UUID clientId,
-            @RequestParam int starRating) {
-        Review review = reviewService.createClientToRestaurantReview(restaurantId, clientId, starRating);
-        return ResponseEntity.ok(review);
+    public ResponseEntity<ReviewDTO> createClientToRestaurantReview(@RequestBody CreateReviewRequestDTO request) {
+        Review review = reviewService.createOrUpdateClientToRestaurantReview(
+                request.getRestaurantId(),
+                request.getClientId(),
+                request.getStarRating()
+        );
+        return ResponseEntity.ok(reviewService.mapToDTO(review));
     }
 
+
     @PostMapping("/restaurant-to-client")
-    public ResponseEntity<Review> createRestaurantToClientReview(
+    public ResponseEntity<ReviewDTO> createRestaurantToClientReview(
             @RequestParam UUID clientId,
             @RequestParam UUID restaurantId,
             @RequestParam boolean isPositive) {
         Review review = reviewService.createRestaurantToClientReview(clientId, restaurantId, isPositive);
-        return ResponseEntity.ok(review);
+        return ResponseEntity.ok(reviewService.mapToDTO(review));
     }
+
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<Review>> getReviewsByRestaurant(@PathVariable UUID restaurantId) {
+    public ResponseEntity<List<ReviewDTO>> getReviewsByRestaurant(@PathVariable UUID restaurantId) {
         List<Review> reviews = reviewService.getReviewsByRestaurant(restaurantId);
-        return ResponseEntity.ok(reviews);
+        List<ReviewDTO> dtos = reviews.stream()
+                .map(reviewService::mapToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
+
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<List<Review>> getReviewsByClient(@PathVariable UUID clientId) {
+    public ResponseEntity<List<ReviewDTO>> getReviewsByClient(@PathVariable UUID clientId) {
         List<Review> reviews = reviewService.getReviewsByClient(clientId);
-        return ResponseEntity.ok(reviews);
+        List<ReviewDTO> dtos = reviews.stream()
+                .map(reviewService::mapToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 }

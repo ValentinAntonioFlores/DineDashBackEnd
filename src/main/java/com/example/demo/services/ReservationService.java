@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -96,5 +97,15 @@ public class ReservationService {
                 .distinct()
                 .toList();
     }
+
+    public boolean userHasReservationOnDay(ClientUser user, RestaurantUser restaurant, LocalDate date) {
+        List<Reservation> reservations = getReservationsByClientUser(user);
+        return reservations.stream()
+                .anyMatch(r ->
+                        r.getRestaurant().getIdRestaurante().equals(restaurant.getIdRestaurante()) &&
+                                r.getStartTime().toLocalDate().equals(date)
+                );
+    }
+
 
 }
