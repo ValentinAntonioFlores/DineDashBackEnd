@@ -40,7 +40,6 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.mapToDTO(review));
     }
 
-
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByRestaurant(@PathVariable UUID restaurantId) {
         List<Review> reviews = reviewService.getReviewsByRestaurant(restaurantId);
