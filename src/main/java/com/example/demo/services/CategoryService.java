@@ -1,9 +1,6 @@
 package com.example.demo.services;
 
 import com.example.demo.model.category.Category;
-import com.example.demo.model.category.DTO.CategoryDTO;
-import com.example.demo.model.category.DTO.CreateCategoryDTO;
-import com.example.demo.model.restaurantUser.DTO.RestaurantUserDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.RestaurantUserRepository;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -24,15 +20,8 @@ public class CategoryService {
     @Autowired
     private RestaurantUserRepository restaurantUserRepository;
 
-    public CategoryDTO toDTO(Category category) {
-        return new CategoryDTO(category.getId(), category.getName(), category.getRestaurantUser().getIdRestaurante());
-    }
-
-    public List<CategoryDTO> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return categories.stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
     public Category getCategoryById(UUID id) {
@@ -40,28 +29,24 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with ID: " + id));
     }
 
-    public CategoryDTO createCategory(CreateCategoryDTO dto) {
-        Optional<Category> existingCategory = categoryRepository.findByNameAndRestaurantUser_IdRestaurante(dto.getName(), dto.getRestaurantId());
+
+    public Category createCategory(String name, UUID restaurantId) {
+        Optional<Category> existingCategory = categoryRepository.findByName(name);
         if (existingCategory.isPresent()) {
-            throw new RuntimeException("Category already exists for this restaurant");
+            throw new RuntimeException("Category already exists with name: " + name);
         }
 
-        RestaurantUser restaurantUser = restaurantUserRepository.findById(dto.getRestaurantId())
-                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+        RestaurantUser restaurantUser = restaurantUserRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found with ID: " + restaurantId));
 
         Category category = new Category();
-        category.setName(dto.getName());
-        category.setRestaurantUser(restaurantUser);
-
-        Category savedCategory = categoryRepository.save(category);
-
-        return toDTO(savedCategory);
+        category.setName(name);
+        category.setRestaurant(restaurantUser); // set the restaurant
+        return categoryRepository.save(category);
     }
-
 
 
     public void deleteCategory(UUID id) {
         categoryRepository.deleteById(id);
     }
-
 }

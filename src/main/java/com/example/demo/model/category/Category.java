@@ -6,20 +6,16 @@ import jakarta.persistence.*;
 import java.util.UUID;
 
 @Entity
-@Table(name = "category", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"name", "restaurant_user_id_restaurante"})
-})
 public class Category {
 
     @Id
     @GeneratedValue
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "restaurant_user_id_restaurante", nullable = false)
     private RestaurantUser restaurantUser;
 
     public Category() {
@@ -48,11 +44,11 @@ public class Category {
         this.name = name;
     }
 
-    public RestaurantUser getRestaurantUser() {
+    public RestaurantUser getRestaurant() {
         return restaurantUser;
     }
 
-    public void setRestaurantUser(RestaurantUser restaurantUser) {
+    public void setRestaurant(RestaurantUser restaurantUser) {
         this.restaurantUser = restaurantUser;
     }
 }
