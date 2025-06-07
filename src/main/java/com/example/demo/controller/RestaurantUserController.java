@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
+import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.DTO.RestaurantLoginResponseDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -203,7 +204,4 @@ public class RestaurantUserController {
         List<RestaurantUserDTO> restaurants = restaurantUserService.searchRestaurantsByLocation(latitude, longitude, radius);
         return ResponseEntity.ok(restaurants);
     }
-
-
-
 }

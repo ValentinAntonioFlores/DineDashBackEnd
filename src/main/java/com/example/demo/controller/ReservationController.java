@@ -140,7 +140,8 @@ public class ReservationController {
                         r.getTable().getId(),
                         r.getStatus().name(),
                         r.getStartTime(),
-                        r.getEndTime()
+                        r.getEndTime(),
+                        r.getClientUser().getIdUsuario()  // Assuming you want to include the user ID
                 )).toList();
 
         return ResponseEntity.ok(filtered);

@@ -36,7 +36,7 @@ public class ReviewController {
             @RequestParam UUID clientId,
             @RequestParam UUID restaurantId,
             @RequestParam boolean isPositive) {
-        Review review = reviewService.createRestaurantToClientReview(clientId, restaurantId, isPositive);
+        Review review = reviewService.createOrUpdateRestaurantToClientReview(clientId, restaurantId, isPositive);
         return ResponseEntity.ok(reviewService.mapToDTO(review));
     }
 

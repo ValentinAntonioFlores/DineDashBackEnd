@@ -1,37 +1,41 @@
-package com.example.demo.model.product;
+package com.example.demo.model.product.DTO;
 
-import com.example.demo.model.restaurantUser.RestaurantUser;
-import jakarta.persistence.*;
 import java.util.UUID;
 
-@Entity
-public class Product {
+public class GetProductDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID restaurantId;
     private UUID id;
-
     private String name;
-
     private String description;
-
     private double price;
-
     private String image;
-
     private String category;
 
-    @ManyToOne
-    @JoinColumn(name = "restaurant_user_id")
-    private RestaurantUser restaurantUser;
+    public GetProductDTO(UUID restaurantId, UUID id, String name, String description, double price, String image, String category) {
+        this.restaurantId = restaurantId;
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.image = image;
+        this.category = category;
+    }
 
-    // Getters and setters
     public UUID getId() {
         return id;
     }
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public UUID getRestaurantId() {
+        return restaurantId;
+    }
+
+    public void setRestaurantId(UUID restaurantId) {
+        this.restaurantId = restaurantId;
     }
 
     public String getName() {
@@ -64,14 +68,6 @@ public class Product {
 
     public void setImage(String image) {
         this.image = image;
-    }
-
-    public RestaurantUser getRestaurantUser() {
-        return restaurantUser;
-    }
-
-    public void setRestaurantUser(RestaurantUser restaurantUser) {
-        this.restaurantUser = restaurantUser;
     }
 
     public String getCategory() {

@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.model.product.DTO.GetProductDTO;
+import com.example.demo.model.product.DTO.UpdateProductDTO;
 import com.example.demo.model.product.Product;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.services.ProductService;
@@ -24,22 +26,24 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable UUID id, @RequestBody Product updatedProduct) {
-        Product product = productService.updateProduct(id, updatedProduct);
-        return ResponseEntity.ok(product);
+    public ResponseEntity<GetProductDTO> updateProductById(
+            @PathVariable UUID id,
+            @RequestBody UpdateProductDTO updatedProductDto) {
+
+        GetProductDTO updatedProduct = productService.updateProduct(id, updatedProductDto);
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteProduct(@PathVariable UUID id) {
+    public ResponseEntity<String> deleteProductById(@PathVariable UUID id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("Product deleted successfully");
     }
 
     @GetMapping("/restaurant/{restaurantId}")
-    public ResponseEntity<List<Product>> getProductsByRestaurant(@PathVariable UUID restaurantId) {
-        RestaurantUser restaurantUser = new RestaurantUser();
-        restaurantUser.setIdRestaurante(restaurantId);
-        List<Product> products = productService.getProductsByRestaurant(restaurantUser);
+    public ResponseEntity<List<GetProductDTO>> getProductsByRestaurant(@PathVariable UUID restaurantId) {
+        List<GetProductDTO> products = productService.getProductsByRestaurantId(restaurantId);
         return ResponseEntity.ok(products);
     }
+
 }
