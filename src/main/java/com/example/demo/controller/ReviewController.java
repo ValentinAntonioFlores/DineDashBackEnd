@@ -59,4 +59,11 @@ public class ReviewController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(dtos);
     }
+
+    @GetMapping("/restaurant/{restaurantId}/average-rating")
+    public ResponseEntity<Double> getAverageRatingForRestaurant(@PathVariable UUID restaurantId) {
+        double average = reviewService.calculateAverageRating(restaurantId);
+        return ResponseEntity.ok(average);
+    }
+
 }

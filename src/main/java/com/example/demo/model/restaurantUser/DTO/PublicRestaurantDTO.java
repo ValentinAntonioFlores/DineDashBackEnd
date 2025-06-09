@@ -10,13 +10,15 @@ public class PublicRestaurantDTO {
         private String name;
         private String imageUrl;
         private List<TableDTO> layout;
+        private double averageRating;
 
 
-        public PublicRestaurantDTO(String id, String name, String imageUrl, List<TableDTO> layout) {
+        public PublicRestaurantDTO(String id, String name, String imageUrl, List<TableDTO> layout, double averageRating) {
             this.id = id;
             this.name = name;
             this.imageUrl = imageUrl;
             this.layout = layout;
+            this.averageRating = averageRating;
     }
 
         public String getId() {
@@ -48,4 +50,12 @@ public class PublicRestaurantDTO {
         }
 
         public void setLayout(List<TableDTO> layout) { this.layout = layout; }
+
+        public double getAverageRating() {
+            return averageRating;
+        }
+
+        public void setAverageRating(double averageRating) {
+            this.averageRating = averageRating;
+        }
 }
