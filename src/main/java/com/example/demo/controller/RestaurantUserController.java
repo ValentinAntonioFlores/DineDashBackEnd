@@ -8,6 +8,7 @@ import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.DTO.TableDTO;
 import com.example.demo.repository.RestaurantUserRepository;
 import com.example.demo.services.RestaurantUserService;
+import com.example.demo.services.ReviewService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,10 @@ public class RestaurantUserController {
     private TokenBlackListService tokenBlackListService;
     @Autowired
     private RestaurantUserRepository restaurantUserRepository;
+
+    @Autowired
+    private ReviewService reviewService;
+
 
     // RestaurantUserController.java
 
@@ -171,7 +176,10 @@ public class RestaurantUserController {
                         r.getImagen(), // or whatever field you store image in// optional: layout preview
                         r.getLayout().stream()
                                 .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
-                                .collect(Collectors.toList())
+                                .collect(Collectors.toList()),
+                        reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
+
+
                 ))
                 .collect(Collectors.toList());
     }
@@ -187,7 +195,9 @@ public class RestaurantUserController {
                     r.getImagen(), // or whatever field you store image in
                     r.getLayout().stream()
                             .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
-                            .collect(Collectors.toList())
+                            .collect(Collectors.toList()),
+                    reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
+
             );
             return ResponseEntity.ok(restaurantDTO);
         } else {

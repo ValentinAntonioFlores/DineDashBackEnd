@@ -88,4 +88,17 @@ public class ReviewService {
     public List<Review> getReviewsByClient(UUID clientId) {
         return reviewRepository.findByClientUser_IdUsuario(clientId);
     }
+
+    public double calculateAverageRating(UUID restaurantId) {
+        List<Review> reviews = reviewRepository.findByRestaurantUser_IdRestauranteAndReviewType(
+                restaurantId, ReviewType.CLIENT_TO_RESTAURANT
+        );
+
+        return reviews.stream()
+                .filter(review -> review.getStarRating() != null)
+                .mapToInt(Review::getStarRating)
+                .average()
+                .orElse(0.0);
+    }
+
 }
