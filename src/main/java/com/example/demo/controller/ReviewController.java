@@ -40,6 +40,7 @@ public class ReviewController {
         return ResponseEntity.ok(reviewService.mapToDTO(review));
     }
 
+
     @GetMapping("/restaurant/{restaurantId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByRestaurant(@PathVariable UUID restaurantId) {
         List<Review> reviews = reviewService.getReviewsByRestaurant(restaurantId);
@@ -53,15 +54,6 @@ public class ReviewController {
     @GetMapping("/client/{clientId}")
     public ResponseEntity<List<ReviewDTO>> getReviewsByClient(@PathVariable UUID clientId) {
         List<Review> reviews = reviewService.getReviewsByClient(clientId);
-        List<ReviewDTO> dtos = reviews.stream()
-                .map(reviewService::mapToDTO)
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(dtos);
-    }
-
-    @GetMapping("/client/{clientId}/restaurant-reviews")
-    public ResponseEntity<List<ReviewDTO>> getRestaurantReviewsForClient(@PathVariable UUID clientId) {
-        List<Review> reviews = reviewService.getRestaurantReviewsForClient(clientId);
         List<ReviewDTO> dtos = reviews.stream()
                 .map(reviewService::mapToDTO)
                 .collect(Collectors.toList());
