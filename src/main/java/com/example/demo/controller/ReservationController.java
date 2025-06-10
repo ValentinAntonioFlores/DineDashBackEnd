@@ -3,7 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.reservation.DTO.*;
-        import com.example.demo.model.reservation.Reservation;
+import com.example.demo.model.reservation.NotificationStatus;
+import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
@@ -85,7 +86,8 @@ public class ReservationController {
                 clientUser,
                 reservationDTO.getStartTime(),
                 reservationDTO.getEndTime(),
-                ReservationStatus.PENDING
+                ReservationStatus.PENDING,
+                NotificationStatus.NOT_SEEN
         );
 
         return ResponseEntity.ok(reservation);
@@ -120,7 +122,8 @@ public class ReservationController {
                         r.getStatus().name(),
                         r.getClientUser().getIdUsuario(),
                         r.getStartTime(),
-                        r.getEndTime()
+                        r.getEndTime(),
+                        r.getNotificationStatus().name()
                 ))
                 .toList();
 
@@ -153,9 +156,15 @@ public class ReservationController {
         return ResponseEntity.ok(reservedTableIds);
     }
 
-
-
-
-    //Que llame en que tiempo en que horario y dia se hizo y  el status. Deberia de hacerlo que utilize el restaurant id ?
+    @PostMapping("/mark-notifications-seen-by-ids")
+    public ResponseEntity<Void> markNotificationsSeenByIds(@RequestBody List<UUID> reservationIds) {
+        try {
+            reservationService.markNotificationsAsSeenByIds(reservationIds);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            System.err.println("Error marking notifications as seen by IDs: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }
 

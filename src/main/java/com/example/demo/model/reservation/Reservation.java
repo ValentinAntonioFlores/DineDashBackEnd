@@ -35,15 +35,19 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     private ReservationStatus status;
 
+    @Enumerated(EnumType.STRING)
+    private NotificationStatus notificationStatus;
+
     public Reservation() {}
 
-    public Reservation(RestaurantTable table, RestaurantUser restaurantUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status, ClientUser clientUser) {
+    public Reservation(RestaurantTable table, RestaurantUser restaurantUser, LocalDateTime startTime, LocalDateTime endTime, ReservationStatus status, ClientUser clientUser, NotificationStatus notificationStatus) {
         this.table = table;
         this.restaurantUser = restaurantUser;
         this.startTime = startTime;
         this.endTime = endTime;
         this.status = status;
         this.clientUser = clientUser;
+        this.notificationStatus = notificationStatus;
     }
     public UUID getId() {
         return id;
@@ -133,5 +137,13 @@ public class Reservation {
 
     public void setUser(RestaurantUser user) {
         this.restaurantUser = user;
+    }
+
+    public NotificationStatus getNotificationStatus() {
+        return notificationStatus;
+    }
+
+    public void setNotificationStatus(NotificationStatus notificationStatus) {
+        this.notificationStatus = notificationStatus;
     }
 }

@@ -89,6 +89,10 @@ public class ReviewService {
         return reviewRepository.findByClientUser_IdUsuario(clientId);
     }
 
+    public List<Review> getRestaurantReviewsForClient(UUID clientId) {
+        return reviewRepository.findByClientUser_IdUsuarioAndReviewType(clientId, ReviewType.RESTAURANT_TO_CLIENT);
+    }
+
     public double calculateAverageRating(UUID restaurantId) {
         List<Review> reviews = reviewRepository.findByRestaurantUser_IdRestauranteAndReviewType(
                 restaurantId, ReviewType.CLIENT_TO_RESTAURANT
