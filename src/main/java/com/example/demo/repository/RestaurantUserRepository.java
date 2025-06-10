@@ -12,6 +12,7 @@ public interface RestaurantUserRepository extends JpaRepository<RestaurantUser, 
     Optional<RestaurantUser> findByEmail(String email);
 
     List<RestaurantUser> findByNombreRestauranteContainingIgnoreCase(String nombreRestaurante);
+    Optional<RestaurantUser> findById(UUID id);
 
 }
 

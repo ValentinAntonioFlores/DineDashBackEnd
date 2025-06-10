@@ -19,14 +19,22 @@ public class ClientUser {
 
     private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
 
+    @Column(nullable = true)
+    private Double latitude;
+
+    @Column(nullable = true)
+    private Double longitude;
+
 
     public ClientUser() {}
 
-    public ClientUser(String nombre, String apellido, String email, String contraseña) {
+    public ClientUser(String nombre, String apellido, String email, String contraseña, Double latitude, Double longitude) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
         this.contraseña = contraseña;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public UUID getIdUsuario() { return idUsuario; }
@@ -43,4 +51,21 @@ public class ClientUser {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
 }

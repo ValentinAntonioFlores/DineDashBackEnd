@@ -130,4 +130,24 @@ public class ClientUserController {
         tokenBlackListService.addToBlacklist(jwtToken);
         return ResponseEntity.ok("Logout successful");
     }
+
+    @PutMapping("{id}/location")
+    public ResponseEntity<GetLocationDTO> updateLocation(@PathVariable UUID id, @RequestBody GetLocationDTO newLocation) {
+        try {
+            GetLocationDTO updatedLocation = clientUserService.updateLocation(id, newLocation);
+            return ResponseEntity.ok(updatedLocation);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping("{id}/getLocation")
+    public ResponseEntity<GetLocationDTO> getLocation(@PathVariable UUID id) {
+        try {
+            GetLocationDTO location = clientUserService.getLocation(id);
+            return ResponseEntity.ok(location);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 }

@@ -178,9 +178,9 @@ public class RestaurantUserController {
                         r.getLayout().stream()
                                 .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
                                 .collect(Collectors.toList()),
-                        reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
-
-
+                        reviewService.calculateAverageRating(r.getIdRestaurante()), // Add this
+                        r.getLatitude(),
+                        r.getLongitude()
                 ))
                 .collect(Collectors.toList());
     }
@@ -197,8 +197,9 @@ public class RestaurantUserController {
                     r.getLayout().stream()
                             .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
                             .collect(Collectors.toList()),
-                    reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
-
+                    reviewService.calculateAverageRating(r.getIdRestaurante()),// Add this
+                    r.getLatitude(),
+                    r.getLongitude()
             );
             return ResponseEntity.ok(restaurantDTO);
         } else {
@@ -214,4 +215,22 @@ public class RestaurantUserController {
         List<RestaurantUserDTO> restaurants = restaurantUserService.searchRestaurantsByLocation(latitude, longitude, radius);
         return ResponseEntity.ok(restaurants);
     }
+
+    @PutMapping("/{id}/location")
+    public ResponseEntity<String> updateLocation(@PathVariable UUID id, @RequestBody UpdateLocationDTO dto) {
+        restaurantUserService.updateLocation(id, dto);
+        return ResponseEntity.ok("Location updated successfully.");
+    }
+
+    // RestaurantUserController.java
+    @GetMapping("/{id}/getlocation")
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable UUID id) {
+        try {
+            LocationDTO location = restaurantUserService.getRestaurantLocation(id);
+            return ResponseEntity.ok(location);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 }
