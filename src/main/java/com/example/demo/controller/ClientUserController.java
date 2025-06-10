@@ -131,4 +131,10 @@ public class ClientUserController {
         tokenBlackListService.addToBlacklist(jwtToken);
         return ResponseEntity.ok("Logout successful");
     }
+
+    @PutMapping("/{id}/email-notifications")
+    public ResponseEntity<Void> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
+        clientUserService.updateEmailNotifications(id, enabled);
+        return ResponseEntity.ok().build();
+    }
 }

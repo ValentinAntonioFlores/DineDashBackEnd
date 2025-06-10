@@ -204,6 +204,12 @@ public class RestaurantUserController {
         return ResponseEntity.ok(restaurants);
     }
 
+    @PutMapping("/{id}/email-notifications")
+    public ResponseEntity<Void> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
+        restaurantUserService.updateEmailNotifications(id, enabled);
+        return ResponseEntity.ok().build();
+    }
+
 
 
 }

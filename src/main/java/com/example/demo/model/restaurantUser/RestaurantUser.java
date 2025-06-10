@@ -38,6 +38,16 @@ public class RestaurantUser {
 
     public RestaurantUser() {}
 
+    private Boolean emailNotificationsEnabled = true;
+
+    public Boolean getEmailNotificationsEnabled() {
+        return emailNotificationsEnabled;
+    }
+
+    public void setEmailNotificationsEnabled(Boolean emailNotificationsEnabled) {
+        this.emailNotificationsEnabled = emailNotificationsEnabled;
+    }
+
     public RestaurantUser(String nombreRestaurante, String email, String contraseña, Double latitude, Double longitude) {
         this.nombreRestaurante = nombreRestaurante;
         this.email = email;

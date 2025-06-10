@@ -22,6 +22,16 @@ public class ClientUser {
 
     public ClientUser() {}
 
+    private Boolean emailNotificationsEnabled = true;
+
+    public Boolean getEmailNotificationsEnabled() {
+        return emailNotificationsEnabled;
+    }
+
+    public void setEmailNotificationsEnabled(Boolean emailNotificationsEnabled) {
+        this.emailNotificationsEnabled = emailNotificationsEnabled;
+    }
+
     public ClientUser(String nombre, String apellido, String email, String contraseña) {
         this.nombre = nombre;
         this.apellido = apellido;
