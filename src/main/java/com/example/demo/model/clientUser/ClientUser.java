@@ -29,9 +29,16 @@ public class ClientUser {
     @Column(nullable = true)
     private Double longitude;
 
+    @Column(nullable = true)
+    private Double latitude;
+
+    @Column(nullable = true)
+    private Double longitude;
+
 
     public ClientUser() {}
 
+    public ClientUser(String nombre, String apellido, String email, String contraseña, Double latitude, Double longitude) {
     private Boolean emailNotificationsEnabled = true;
 
     public Boolean getEmailNotificationsEnabled() {
@@ -47,6 +54,8 @@ public class ClientUser {
         this.apellido = apellido;
         this.email = email;
         this.contraseña = contraseña;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.latitude = latitude;
         this.longitude = longitude;
     }

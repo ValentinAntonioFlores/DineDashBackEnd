@@ -11,14 +11,18 @@ public class PublicRestaurantDTO {
         private String imageUrl;
         private List<TableDTO> layout;
         private double averageRating;
+        private Double latitude;
+        private Double longitude;
 
 
-        public PublicRestaurantDTO(String id, String name, String imageUrl, List<TableDTO> layout, double averageRating) {
+        public PublicRestaurantDTO(String id, String name, String imageUrl, List<TableDTO> layout, double averageRating, Double latitude, Double longitude) {
             this.id = id;
             this.name = name;
             this.imageUrl = imageUrl;
             this.layout = layout;
             this.averageRating = averageRating;
+            this.latitude = latitude;
+            this.longitude = longitude;
     }
 
         public String getId() {
@@ -58,4 +62,21 @@ public class PublicRestaurantDTO {
         public void setAverageRating(double averageRating) {
             this.averageRating = averageRating;
         }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(Double latitude) {
+            this.latitude = latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(Double longitude) {
+            this.longitude = longitude;
+        }
 }
+
