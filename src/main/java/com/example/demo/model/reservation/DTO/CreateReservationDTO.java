@@ -17,6 +17,8 @@ public class CreateReservationDTO {
     @JsonProperty("userId")
     private UUID idUsuario;
 
+     
+
     // Getters and setters
     public UUID getTableId() {
         return idTable;
