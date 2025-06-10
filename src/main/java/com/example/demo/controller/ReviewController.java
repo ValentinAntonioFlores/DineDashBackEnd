@@ -60,6 +60,15 @@ public class ReviewController {
         return ResponseEntity.ok(dtos);
     }
 
+    @GetMapping("/client/{clientId}/restaurant-reviews")
+    public ResponseEntity<List<ReviewDTO>> getRestaurantReviewsForClient(@PathVariable UUID clientId) {
+        List<Review> reviews = reviewService.getRestaurantReviewsForClient(clientId);
+        List<ReviewDTO> dtos = reviews.stream()
+                .map(reviewService::mapToDTO)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
     @GetMapping("/restaurant/{restaurantId}/average-rating")
     public ResponseEntity<Double> getAverageRatingForRestaurant(@PathVariable UUID restaurantId) {
         double average = reviewService.calculateAverageRating(restaurantId);

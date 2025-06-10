@@ -15,5 +15,6 @@ public interface ReviewRepository extends JpaRepository<Review, UUID> {
 
     Optional<Review> findByRestaurantUser_IdRestauranteAndClientUser_IdUsuarioAndReviewType(UUID restaurantId, UUID clientId, ReviewType reviewType);
     List<Review> findByRestaurantUser_IdRestauranteAndReviewType(UUID restaurantUserId, ReviewType reviewType);
+    List<Review> findByClientUser_IdUsuarioAndReviewType(UUID clientUserId, ReviewType reviewType);
 
 }
