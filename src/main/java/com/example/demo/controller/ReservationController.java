@@ -166,5 +166,11 @@ public class ReservationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    @GetMapping("/restaurant/{restaurantId}/pending-count")
+    public ResponseEntity<Long> getPendingReservationsCount(@PathVariable UUID restaurantId) {
+        long count = reservationService.getPendingReservationsCountByRestaurant(restaurantId);
+        return ResponseEntity.ok(count);
+    }
 }
 

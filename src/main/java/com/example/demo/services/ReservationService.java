@@ -126,5 +126,9 @@ public class ReservationService {
                 );
     }
 
+    public long getPendingReservationsCountByRestaurant(UUID restaurantId) {
+        return reservationRepository.countByRestaurantUser_IdRestauranteAndStatus(restaurantId, ReservationStatus.PENDING);
+    }
+
 
 }
