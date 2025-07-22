@@ -6,6 +6,7 @@ import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.services.ClientUserService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -150,4 +151,28 @@ public class ClientUserController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @PutMapping("{id}/email-notifications")
+    public ResponseEntity<String> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
+        try {
+            clientUserService.updateEmailNotifications(id, enabled);
+            return ResponseEntity.ok("Email notification preference updated successfully.");
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error updating email notifications.");
+        }
+    }
+
+    @GetMapping("{id}/email-notifications")
+    public ResponseEntity<Boolean> getEmailNotifications(@PathVariable UUID id) {
+        try {
+            boolean isEnabled = clientUserService.getEmailNotifications(id);
+            return ResponseEntity.ok(isEnabled);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+
 }

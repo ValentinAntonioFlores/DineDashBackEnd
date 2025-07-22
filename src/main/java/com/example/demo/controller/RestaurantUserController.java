@@ -233,4 +233,26 @@ public class RestaurantUserController {
         }
     }
 
+    // Get current email notification preference
+    @GetMapping("/{id}/notifications")
+    public ResponseEntity<Boolean> getEmailNotifications(@PathVariable UUID id) {
+        try {
+            boolean enabled = restaurantUserService.getEmailNotifications(id);
+            return ResponseEntity.ok(enabled);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    // Update email notification preference
+    @PutMapping("/{id}/notifications")
+    public ResponseEntity<String> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
+        try {
+            restaurantUserService.updateEmailNotifications(id, enabled);
+            return ResponseEntity.ok("Email notifications updated to: " + enabled);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
 }

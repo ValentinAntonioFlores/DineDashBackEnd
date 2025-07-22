@@ -4,6 +4,7 @@ import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +33,9 @@ public class ClientUserService {
                 clientUserDTO.getNombre(),
                 clientUserDTO.getApellido(),
                 clientUserDTO.getEmail(),
-                clientUserDTO.getContraseña()
+                clientUserDTO.getContraseña(),
+                null,
+                null
         );
 
         ClientUser savedUser = clientUserRepository.save(newUser);
@@ -189,6 +192,12 @@ public class ClientUserService {
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
         user.setEmailNotificationsEnabled(enabled);
         clientUserRepository.save(user);
+    }
+
+    public boolean getEmailNotifications(UUID clientId) {
+        ClientUser user = clientUserRepository.findById(clientId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
+        return user.getEmailNotificationsEnabled();
     }
 
 }

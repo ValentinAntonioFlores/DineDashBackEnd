@@ -42,7 +42,7 @@ public class ClientUser {
         this.emailNotificationsEnabled = emailNotificationsEnabled;
     }
 
-    public ClientUser(String nombre, String apellido, String email, String contraseña) {
+    public ClientUser(String nombre, String apellido, String email, String contraseña, Double latitude, Double longitude) {
         this.nombre = nombre;
         this.apellido = apellido;
         this.email = email;
@@ -76,9 +76,27 @@ public class ClientUser {
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public String getGoogleId() { return googleId; }
     public void setGoogleId(String googleId) { this.googleId = googleId; }
 
     public Boolean getIsGoogleUser() { return isGoogleUser; }
     public void setIsGoogleUser(Boolean isGoogleUser) { this.isGoogleUser = isGoogleUser; }
+}
+
 }
