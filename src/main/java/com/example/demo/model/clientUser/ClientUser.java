@@ -19,6 +19,9 @@ public class ClientUser {
 
     private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
 
+    // Google OAuth2 fields
+    private String googleId;
+    private Boolean isGoogleUser = false;
 
     public ClientUser() {}
 
@@ -39,6 +42,16 @@ public class ClientUser {
         this.contraseña = contraseña;
     }
 
+    // Constructor for Google OAuth2 users
+    public ClientUser(String nombre, String apellido, String email, String googleId, Boolean isGoogleUser) {
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.email = email;
+        this.googleId = googleId;
+        this.isGoogleUser = isGoogleUser;
+        this.contraseña = null; // Google users don't need a password
+    }
+
     public UUID getIdUsuario() { return idUsuario; }
     public void setIdUsuario(UUID idUsuario) { this.idUsuario = idUsuario; }
 
@@ -53,4 +66,10 @@ public class ClientUser {
 
     public String getContraseña() { return contraseña; }
     public void setContraseña(String contraseña) { this.contraseña = contraseña; }
+
+    public String getGoogleId() { return googleId; }
+    public void setGoogleId(String googleId) { this.googleId = googleId; }
+
+    public Boolean getIsGoogleUser() { return isGoogleUser; }
+    public void setIsGoogleUser(Boolean isGoogleUser) { this.isGoogleUser = isGoogleUser; }
 }
