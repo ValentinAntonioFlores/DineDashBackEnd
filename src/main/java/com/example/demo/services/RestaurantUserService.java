@@ -8,7 +8,6 @@ import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.DTO.TableDTO;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -170,12 +169,25 @@ public class RestaurantUserService {
         return earthRadius * c;
     }
 
-    public void updateEmailNotifications(UUID restaurantId, boolean enabled) {
-        RestaurantUser user = restaurantUserRepository.findById(restaurantId)
-                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
-        user.setEmailNotificationsEnabled(enabled);
+    public void updateLocation(UUID id, UpdateLocationDTO dto) {
+        RestaurantUser user = restaurantUserRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        user.setLatitude(dto.getLatitude());
+        user.setLongitude(dto.getLongitude());
+
         restaurantUserRepository.save(user);
     }
+
+    // RestaurantUserService.java
+    public LocationDTO getRestaurantLocation(UUID restaurantId) {
+        RestaurantUser user = restaurantUserRepository.findById(restaurantId)
+                .orElseThrow(() -> new RuntimeException("Restaurant not found"));
+
+        return new LocationDTO(user.getLatitude(), user.getLongitude());
+    }
+
+
 
 }
 

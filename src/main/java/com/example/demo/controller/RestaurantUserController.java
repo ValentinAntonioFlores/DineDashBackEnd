@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.jwt.JwtUtility;
 import com.example.demo.jwt.TokenBlackListService;
+import com.example.demo.model.clientUser.DTO.ClientUserDTO;
 import com.example.demo.model.restaurantUser.DTO.*;
 import com.example.demo.model.restaurantUser.DTO.RestaurantLoginResponseDTO;
 import com.example.demo.model.restaurantUser.RestaurantUser;
@@ -177,9 +178,9 @@ public class RestaurantUserController {
                         r.getLayout().stream()
                                 .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
                                 .collect(Collectors.toList()),
-                        reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
-
-
+                        reviewService.calculateAverageRating(r.getIdRestaurante()), // Add this
+                        r.getLatitude(),
+                        r.getLongitude()
                 ))
                 .collect(Collectors.toList());
     }
@@ -196,8 +197,9 @@ public class RestaurantUserController {
                     r.getLayout().stream()
                             .map(t -> new TableDTO(t.getId(), t.getCapacity(), t.getPositionX(), t.getPositionY(), t.isAvailable()))
                             .collect(Collectors.toList()),
-                    reviewService.calculateAverageRating(r.getIdRestaurante()) // Add this
-
+                    reviewService.calculateAverageRating(r.getIdRestaurante()),// Add this
+                    r.getLatitude(),
+                    r.getLongitude()
             );
             return ResponseEntity.ok(restaurantDTO);
         } else {
@@ -214,12 +216,21 @@ public class RestaurantUserController {
         return ResponseEntity.ok(restaurants);
     }
 
-    @PutMapping("/{id}/email-notifications")
-    public ResponseEntity<Void> updateEmailNotifications(@PathVariable UUID id, @RequestParam boolean enabled) {
-        restaurantUserService.updateEmailNotifications(id, enabled);
-        return ResponseEntity.ok().build();
+    @PutMapping("/{id}/location")
+    public ResponseEntity<String> updateLocation(@PathVariable UUID id, @RequestBody UpdateLocationDTO dto) {
+        restaurantUserService.updateLocation(id, dto);
+        return ResponseEntity.ok("Location updated successfully.");
     }
 
-
+    // RestaurantUserController.java
+    @GetMapping("/{id}/getlocation")
+    public ResponseEntity<LocationDTO> getLocation(@PathVariable UUID id) {
+        try {
+            LocationDTO location = restaurantUserService.getRestaurantLocation(id);
+            return ResponseEntity.ok(location);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 
 }

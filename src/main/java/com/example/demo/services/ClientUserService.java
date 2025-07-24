@@ -4,7 +4,6 @@ import com.example.demo.model.clientUser.DTO.*;
 import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -164,6 +163,25 @@ public class ClientUserService {
         public EmailAlreadyRegisteredException(String message) {
             super(message);
         }
+    }
+
+    public GetLocationDTO updateLocation(UUID id, GetLocationDTO newLocation) {
+        ClientUser user = clientUserRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        user.setLatitude(newLocation.getLatitude());
+        user.setLongitude(newLocation.getLongitude());
+
+        ClientUser updatedUser = clientUserRepository.save(user);
+
+        return new GetLocationDTO(updatedUser.getLatitude(), updatedUser.getLongitude());
+    }
+
+    public GetLocationDTO getLocation(UUID id) {
+        ClientUser user = clientUserRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        return new GetLocationDTO(user.getLatitude(), user.getLongitude());
     }
 
     public void updateEmailNotifications(UUID clientId, boolean enabled) {

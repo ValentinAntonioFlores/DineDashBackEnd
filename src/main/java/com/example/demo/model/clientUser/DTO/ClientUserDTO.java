@@ -19,6 +19,8 @@ public class ClientUserDTO {
     private String email;
 
 
+
+
     public ClientUserDTO() {}
 
     public ClientUserDTO(UUID idUsuario, String nombre, String apellido, String email) {
