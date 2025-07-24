@@ -29,16 +29,9 @@ public class ClientUser {
     @Column(nullable = true)
     private Double longitude;
 
-    @Column(nullable = true)
-    private Double latitude;
-
-    @Column(nullable = true)
-    private Double longitude;
-
 
     public ClientUser() {}
 
-    public ClientUser(String nombre, String apellido, String email, String contraseña, Double latitude, Double longitude) {
     private Boolean emailNotificationsEnabled = true;
 
     public Boolean getEmailNotificationsEnabled() {
@@ -106,6 +99,4 @@ public class ClientUser {
 
     public Boolean getIsGoogleUser() { return isGoogleUser; }
     public void setIsGoogleUser(Boolean isGoogleUser) { this.isGoogleUser = isGoogleUser; }
-}
-
 }
