@@ -19,10 +19,6 @@ public class ClientUser {
 
     private String contraseña; // ⚠️ La contraseña se guarda en texto plano (encriptar en frontend)
 
-    // Google OAuth2 fields
-    private String googleId;
-    private Boolean isGoogleUser = false;
-
     @Column(nullable = true)
     private Double latitude;
 
@@ -49,18 +45,6 @@ public class ClientUser {
         this.contraseña = contraseña;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
-
-    // Constructor for Google OAuth2 users
-    public ClientUser(String nombre, String apellido, String email, String googleId, Boolean isGoogleUser) {
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.email = email;
-        this.googleId = googleId;
-        this.isGoogleUser = isGoogleUser;
-        this.contraseña = null; // Google users don't need a password
     }
 
     public UUID getIdUsuario() { return idUsuario; }
@@ -94,9 +78,4 @@ public class ClientUser {
         this.longitude = longitude;
     }
 
-    public String getGoogleId() { return googleId; }
-    public void setGoogleId(String googleId) { this.googleId = googleId; }
-
-    public Boolean getIsGoogleUser() { return isGoogleUser; }
-    public void setIsGoogleUser(Boolean isGoogleUser) { this.isGoogleUser = isGoogleUser; }
 }

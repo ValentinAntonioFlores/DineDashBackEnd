@@ -8,10 +8,7 @@ import com.example.demo.model.reservation.Reservation;
 import com.example.demo.model.reservation.ReservationStatus;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.model.table.RestaurantTable;
-import com.example.demo.services.ClientUserService;
-import com.example.demo.services.ReservationService;
-import com.example.demo.services.RestaurantUserService;
-import com.example.demo.services.TableService;
+import com.example.demo.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +31,8 @@ public class ReservationController {
     private RestaurantUserService restaurantUserService;
     @Autowired
     private ClientUserService clientUserService;
+    @Autowired
+    private EmailService emailService;
 
     @PostMapping("all")
     public ResponseEntity<List<Reservation>> getAllReservations() {
@@ -90,6 +89,24 @@ public class ReservationController {
                 NotificationStatus.NOT_SEEN
         );
 
+        try {
+            String restauranteEmail = restaurantUser.getEmail(); // Asegurate que este getter existe
+            String clientName = clientUser.getNombre(); // O getFirstName(), como lo tengas
+            String tableId = table.getId().toString();
+            String fecha = reservationDTO.getStartTime().toLocalDate().toString();
+
+            if (restaurantUser.getEmailNotificationsEnabled()) {
+                String subject = "Nueva solicitud de reserva";
+                String body = String.format("El cliente %s solicitó una reserva para la mesa %s para el %s.",
+                        clientName, tableId, fecha);
+
+                emailService.sendSimpleEmail(restauranteEmail, subject, body);
+            }
+        } catch (Exception e) {
+            System.err.println("Error al enviar correo al restaurante: " + e.getMessage());
+            // Podrías loguearlo o ignorarlo
+        }
+
         return ResponseEntity.ok(reservation);
     }
 
@@ -97,8 +114,31 @@ public class ReservationController {
     @PostMapping("update-status")
     public ResponseEntity<Reservation> updateReservationStatus(@RequestBody UpdateReservationStatusDTO statusDTO) {
         Reservation updatedReservation = reservationService.updateReservationStatus(statusDTO.getReservationId(), statusDTO.getStatus());
+
+        if (updatedReservation.getStatus() == ReservationStatus.ACCEPTED || updatedReservation.getStatus() == ReservationStatus.REJECTED) {
+            String restauranteNombre = updatedReservation.getRestaurant().getNombreRestaurante();
+            String fecha = updatedReservation.getStartTime().toLocalDate().toString();
+            String status = updatedReservation.getStatus().name().toLowerCase();
+
+            ClientUser usuario = updatedReservation.getClientUser();
+            String destinatarioEmail = usuario.getEmail(); // asegúrate que exista este getter
+
+            if (Boolean.TRUE.equals(usuario.getEmailNotificationsEnabled())) {
+                String asunto = "Actualización de su reserva";
+                String cuerpo = String.format("Su reserva de %s para %s fue %s.", restauranteNombre, fecha, status);
+
+                try {
+                    emailService.sendSimpleEmail(destinatarioEmail, asunto, cuerpo);
+                } catch (Exception e) {
+                    System.err.println("Error al enviar correo: " + e.getMessage());
+                    // Podrías agregar lógica para manejar errores o simplemente ignorar
+                }
+            }
+        }
+
         return ResponseEntity.ok(updatedReservation);
     }
+
 
     @PostMapping("delete")
     public ResponseEntity<String> deleteReservation(@RequestBody DeleteReservationDTO dto) {

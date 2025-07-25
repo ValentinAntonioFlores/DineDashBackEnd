@@ -36,7 +36,18 @@ public class RestaurantUser {
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<RestaurantTable> layout;  // Relationship to Table (your separate tables)
 
+
     public RestaurantUser() {}
+
+    private Boolean emailNotificationsEnabled = true;
+
+    public Boolean getEmailNotificationsEnabled() {
+        return emailNotificationsEnabled;
+    }
+
+    public void setEmailNotificationsEnabled(Boolean emailNotificationsEnabled) {
+        this.emailNotificationsEnabled = emailNotificationsEnabled;
+    }
 
     public RestaurantUser(String nombreRestaurante, String email, String contraseña, Double latitude, Double longitude) {
         this.nombreRestaurante = nombreRestaurante;
