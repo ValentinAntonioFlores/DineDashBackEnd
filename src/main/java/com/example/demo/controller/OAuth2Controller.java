@@ -1,30 +1,31 @@
 package com.example.demo.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.HashMap;
-import java.util.Map;
-
-@RestController
-@RequestMapping("/oauth2")
-@CrossOrigin(origins = "http://localhost:3000") // Permite conexiones desde React
+@Controller
 public class OAuth2Controller {
 
-    @Value("${spring.security.oauth2.client.registration.google.client-id}")
-    private String googleClientId;
+    /**
+     * Inicia el flujo de login con Google para un Cliente.
+     * Guarda el tipo de usuario en la sesión y redirige al flujo estándar de Spring.
+     */
+    @GetMapping("/login/oauth2/client")
+    public RedirectView loginClient(HttpServletRequest request) {
+        // Guardamos en la sesión que el usuario quiere ser 'client'
+        request.getSession().setAttribute("userType", "client");
+        // Redirigimos al endpoint de autorización de Spring Security
+        return new RedirectView("/oauth2/authorization/google");
+    }
 
-    @GetMapping("/google/url")
-    public ResponseEntity<Map<String, String>> getGoogleAuthUrl() {
-        // The frontend will use this information to construct the Google OAuth URL
-        Map<String, String> response = new HashMap<>();
-        response.put("clientId", googleClientId);
-        response.put("redirectUri", "http://localhost:8000/login/oauth2/code/google"); // This must match the redirect URI registered with Google
-        
-        return ResponseEntity.ok(response);
+    /**
+     * Inicia el flujo de login con Google para un Restaurante.
+     */
+    @GetMapping("/login/oauth2/restaurant")
+    public RedirectView loginRestaurant(HttpServletRequest request) {
+        request.getSession().setAttribute("userType", "restaurant");
+        return new RedirectView("/oauth2/authorization/google");
     }
 }

@@ -4,24 +4,24 @@ import com.example.demo.model.clientUser.ClientUser;
 import com.example.demo.model.restaurantUser.RestaurantUser;
 import com.example.demo.repository.ClientUserRepository;
 import com.example.demo.repository.RestaurantUserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.util.Map;
-import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class OAuth2UserService extends DefaultOAuth2UserService {
 
-    @Autowired
-    private ClientUserRepository clientUserRepository;
-
-    @Autowired
-    private RestaurantUserRepository restaurantUserRepository;
+    private final ClientUserRepository clientUserRepository;
+    private final RestaurantUserRepository restaurantUserRepository;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -39,78 +39,47 @@ public class OAuth2UserService extends DefaultOAuth2UserService {
         String firstName = (String) attributes.get("given_name");
         String lastName = (String) attributes.get("family_name");
 
-        // Check if user exists in ClientUser repository
-        Optional<ClientUser> clientUserOptional = clientUserRepository.findByEmail(email);
+        String userType = determineUserTypeFromSession();
 
-        // Check if user exists in RestaurantUser repository
-        Optional<RestaurantUser> restaurantUserOptional = restaurantUserRepository.findByEmail(email);
-
-        // Determine user type based on request parameters or other logic
-        String userType = determineUserType(userRequest);
-
-        if (userType.equals("client")) {
-            // Handle ClientUser authentication
-            if (clientUserOptional.isPresent()) {
-                // User exists, update Google ID if needed
-                ClientUser existingUser = clientUserOptional.get();
-                if (existingUser.getGoogleId() == null) {
-                    existingUser.setGoogleId(googleId);
-                    existingUser.setIsGoogleUser(true);
-                    clientUserRepository.save(existingUser);
+        if ("restaurant".equals(userType)) {
+            // Busca o crea un usuario de tipo Restaurante
+            restaurantUserRepository.findByEmail(email).orElseGet(() -> {
+                // Si el email ya está usado por un cliente, no se puede crear.
+                if (clientUserRepository.findByEmail(email).isPresent()) {
+                    throw new OAuth2AuthenticationException("Un usuario cliente ya existe con este email.");
                 }
-            } else if (restaurantUserOptional.isEmpty()) {
-                // Create new ClientUser only if email doesn't exist in either repository
-                ClientUser newUser = new ClientUser(
-                    firstName,
-                    lastName,
-                    email,
-                    googleId,
-                    true
-                );
-                clientUserRepository.save(newUser);
-            }
-        } else if (userType.equals("restaurant")) {
-            // Handle RestaurantUser authentication
-            if (restaurantUserOptional.isPresent()) {
-                // User exists, update Google ID if needed
-                RestaurantUser existingUser = restaurantUserOptional.get();
-                if (existingUser.getGoogleId() == null) {
-                    existingUser.setGoogleId(googleId);
-                    existingUser.setIsGoogleUser(true);
-                    restaurantUserRepository.save(existingUser);
+                String restaurantName = firstName + "'s Place"; // Nombre por defecto
+                RestaurantUser newUser = new RestaurantUser(restaurantName, email, googleId, true, null, null);
+                return restaurantUserRepository.save(newUser);
+            });
+        } else { // Por defecto, o si es "client"
+            // Busca o crea un usuario de tipo Cliente
+            clientUserRepository.findByEmail(email).orElseGet(() -> {
+                // Si el email ya está usado por un restaurante, no se puede crear.
+                if (restaurantUserRepository.findByEmail(email).isPresent()) {
+                    throw new OAuth2AuthenticationException("Un usuario restaurante ya existe con este email.");
                 }
-            } else if (clientUserOptional.isEmpty()) {
-                // Create new RestaurantUser only if email doesn't exist in either repository
-                // For restaurant users, we need a restaurant name
-                String restaurantName = firstName + "'s Restaurant"; // Default name, can be changed later
-
-                RestaurantUser newUser = new RestaurantUser(
-                    restaurantName,
-                    email,
-                    googleId,
-                    true,
-                    null, // latitude
-                    null  // longitude
-                );
-                restaurantUserRepository.save(newUser);
-            }
+                ClientUser newUser = new ClientUser(firstName, lastName, email, googleId, true);
+                return clientUserRepository.save(newUser);
+            });
         }
 
         return oAuth2User;
     }
 
-    // Helper method to determine user type from request
-    private String determineUserType(OAuth2UserRequest userRequest) {
-        // Default to client user
-        String userType = "client";
-
-        // Try to determine user type from request parameters
-        // This could be based on the redirect URI, additional parameters, or other logic
-        String redirectUri = userRequest.getClientRegistration().getRedirectUri();
-        if (redirectUri != null && redirectUri.contains("restaurant")) {
-            userType = "restaurant";
+    /**
+     * Obtiene el tipo de usuario ('client' o 'restaurant') desde la sesión HTTP.
+     * Este método es mucho más fiable que intentar leerlo de los parámetros de la URL.
+     */
+    private String determineUserTypeFromSession() {
+        try {
+            ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+            HttpServletRequest request = attr.getRequest();
+            String userType = (String) request.getSession().getAttribute("userType");
+            return (userType != null) ? userType : "client"; // Default to client if not found
+        } catch (IllegalStateException e) {
+            // Esto puede pasar en contextos fuera de una petición web (como en tests)
+            return "client"; // Default seguro
         }
-
-        return userType;
     }
 }
