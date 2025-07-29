@@ -1,7 +1,7 @@
 plugins {
     id 'java'
-    id 'org.springframework.boot' version '3.3.1' // Usando una versión estable y recomendada
-    id 'io.spring.dependency-management' version '1.1.5'
+    id 'org.springframework.boot' version '3.4.3'
+    id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.example'
@@ -18,38 +18,44 @@ repositories {
 }
 
 dependencies {
-    // --- Spring Web ---
-    // Para crear aplicaciones web, APIs REST. Incluye Tomcat y Jackson.
+    // Spring Boot web starter (includes Jackson)
     implementation 'org.springframework.boot:spring-boot-starter-web'
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-    // --- Persistencia de Datos ---
-    // Para interactuar con la base de datos usando JPA. Incluye Hibernate.
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    // Driver específico para PostgreSQL
-    runtimeOnly 'org.postgresql:postgresql'
 
-    // --- Seguridad ---
-    // Para la seguridad general, autenticación y autorización.
-    implementation 'org.springframework.boot:spring-boot-starter-security'
-    // Para la integración con proveedores OAuth2 como Google.
-    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-    // Para la creación y validación de JSON Web Tokens (JWT).
-    implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.5'
-    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.5' // O 'jjwt-gson' si prefieres Gson
-
-    // --- Utilidades ---
-    // Para enviar correos electrónicos.
-    implementation 'org.springframework.boot:spring-boot-starter-mail'
-    // Para facilitar la creación de constructores, getters, setters, etc.
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-
-    // --- Pruebas (Testing) ---
+    // Spring Boot test starter
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.springframework.security:spring-security-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    // Hibernate Core
+    implementation 'org.hibernate:hibernate-core:6.4.4.Final'
+
+    // PostgreSQL driver
+    implementation 'org.postgresql:postgresql:42.7.5'
+
+    // Spring Data JPA
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+    // Spring Boot Mail starter
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+
+    // Servlet API for Jakarta EE (if needed)
+    implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
+
+    // JWT dependencies for security
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    // Spring Security and OAuth2
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // Jackson dependencies (explicitly adding Jackson for JSON processing)
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'  // For Java 8 Date/Time support
 }
 
 tasks.named('test') {

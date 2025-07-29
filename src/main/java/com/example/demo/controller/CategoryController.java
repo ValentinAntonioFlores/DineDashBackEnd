@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.category.Category;
+import com.example.demo.model.category.DTO.CreateCategoryDTO;
 import com.example.demo.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +22,19 @@ public class CategoryController {
         return ResponseEntity.ok(categoryService.getAllCategories());
     }
 
+    @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable UUID id) {
         return ResponseEntity.ok(categoryService.getCategoryById(id));
     }
 
+
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestParam String name) {
-        return ResponseEntity.ok(categoryService.createCategory(name));
+    public ResponseEntity<Category> createCategory(@RequestBody CreateCategoryDTO request) {
+        return ResponseEntity.ok(
+                categoryService.createCategory(request.getName(), request.getRestaurantId())
+        );
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable UUID id) {

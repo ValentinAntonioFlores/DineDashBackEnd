@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.*;
 
 @RestController
@@ -53,8 +54,6 @@ public class ClientUserController {
         }
     }
 
-
-    // ✔ Obtener usuario por ID
     @GetMapping("{id}")
     public ResponseEntity<ClientUserDTO> getUserById(@PathVariable UUID id) {
         Optional<ClientUserDTO> user = clientUserService.getClientById(id);
